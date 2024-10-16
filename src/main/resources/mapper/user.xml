@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.iclass.board.dao.UserMapper">
+
+    <!-- 사용자 등록 -->
+    <insert id="save" parameterType="org.iclass.board.dto.UserDTO">
+        INSERT INTO users (user_id, username, password, email, created_at, is_active)
+        VALUES (user_seq.NEXTVAL, #{username}, #{password}, #{email}, sysdate, 'Y')
+    </insert>
+
+    <!-- 사용자 이름으로 찾기 -->
+    <select id="findByUsername" parameterType="String" resultType="org.iclass.board.dto.UserDTO">
+        SELECT * FROM users WHERE username = #{username}
+    </select>
+
+    <select id="findByUsernameAndPassword" parameterType="map" resultType="org.iclass.board.dto.UserDTO">
+        SELECT * FROM users
+        WHERE username = #{username} AND password = #{password}
+    </select>
+
+</mapper>
