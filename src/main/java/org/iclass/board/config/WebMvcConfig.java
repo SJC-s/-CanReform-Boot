@@ -13,8 +13,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     // 다른 도메인에서 서버의 자원을 요구할 때 허용해 주는 cors 헤더값 설정
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
-        .allowedOrigins("http://192.168.0.25:5173")
+        registry.addMapping("/**")
+        .allowedOrigins("http://localhost:5173", "http://192.168.0.25:5173")
         .allowedMethods("GET","POST","PUT","PATCH","DELETE","OPTIONS")
         .allowedHeaders("*")
         .allowCredentials(true)
