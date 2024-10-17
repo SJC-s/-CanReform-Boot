@@ -3,6 +3,9 @@ package org.iclass.board.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.PostsDTO;
+import org.iclass.board.dto.UserDTO;
+import org.iclass.board.entity.PostsEntity;
+import org.iclass.board.entity.UserEntity;
 import org.iclass.board.service.PostsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -34,13 +37,12 @@ public class PostsController {
     }
 
 
-
     /* JPA 구간 */
+    // user_id -> username 치환하기 위한 데이터
     @GetMapping("/api/posts")
-    public ResponseEntity<?> findAll() {
-
-        List<PostsDTO> list = postsService.list();
-        return ResponseEntity.ok(list);
+    public ResponseEntity<?> getPostsWithUsers() {
+        List<Object[]> users = postsService.list();
+        return ResponseEntity.ok(users);
     }
 }
 
