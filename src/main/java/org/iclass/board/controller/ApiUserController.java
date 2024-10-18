@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.UserDTO;
 import org.iclass.board.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -25,5 +22,11 @@ public class ApiUserController {
         log.info("dtoadfasdfasdf124124124{}", dto.toString());
         UserDTO result = userService.signup(dto);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/check-username")
+    public ResponseEntity<?> checkUsername(@RequestParam String username) {
+        boolean exists = userService.checkUsernameExists(username);
+        return ResponseEntity.ok(exists);
     }
 }

@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Builder
 @Data     // 불변객체 관련된 메소드 재정의
@@ -32,4 +35,11 @@ public class UserEntity {
 
     @Column(name = "PASSWORD", nullable = false, length = 255)
     public String password;
+
+    @Column(name = "USERSROLE", nullable = false)
+    private String usersrole;
+
+    @CreatedDate
+    @Column(name = "CREATED_AT")
+    private LocalDateTime created_at;
 }

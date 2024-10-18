@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.UserAccountDTO;
 import org.iclass.board.dto.UserDTO;
-import org.iclass.board.entity.LoginEntity;
-import org.iclass.board.repository.LoginRepository;
+import org.iclass.board.entity.UserEntity;
+import org.iclass.board.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,18 +18,18 @@ import org.springframework.stereotype.Service;
 
 public class CustomUserDetailsService implements UserDetailsService {
 
-    public final LoginRepository loginRepository;
+    public final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("Response Email : {}", username);
-        LoginEntity entity = loginRepository.findByUserid(Long.parseLong(username));
+        UserEntity entity = userRepository.findByUsername(username);
         log.info("Response Entity : {}", entity);
         if(entity == null){
             throw new UsernameNotFoundException(username);
         }
 
-        UserDTO dto = UserDTO.loginToDTO(entity);
+        UserDTO dto = UserDTO.of(entity);
         log.info(dto.toString());
 
         UserDetails userDetails = UserAccountDTO.builder()

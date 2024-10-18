@@ -34,7 +34,7 @@ public class SecurityConfig {
         )
         .formLogin(form -> form.loginPage("/login")
                 .defaultSuccessUrl("http://localhost:5173/")
-                .usernameParameter("user_id")
+                .usernameParameter("username")
                 .permitAll())
                 .logout(out -> out.logoutSuccessUrl("/").permitAll());
 

@@ -3,9 +3,8 @@ package org.iclass.board.service;
 import lombok.RequiredArgsConstructor;
 import org.iclass.board.dao.UserMapper;
 import org.iclass.board.dto.UserDTO;
-import org.iclass.board.entity.LoginEntity;
-import org.iclass.board.repository.LoginRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.iclass.board.entity.UserEntity;
+import org.iclass.board.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,16 +37,20 @@ public class UserService {
         return userMapper.findByUsernameAndPassword(params);
     }
 
-    private final LoginRepository loginRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     public UserDTO signup(UserDTO dto) {
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
         dto.setPassword(encodedPassword);
-        LoginEntity entity = dto.loginToEntity();
-        loginRepository.save(entity);
+        UserEntity entity = dto.toEntity();
+        userRepository.save(entity);
 
-        return UserDTO.loginToDTO(entity);
+        return UserDTO.of(entity);
+    }
+
+    public boolean checkUsernameExists(String username) {
+        return userRepository.existsByUsername(username);
     }
 
 }
