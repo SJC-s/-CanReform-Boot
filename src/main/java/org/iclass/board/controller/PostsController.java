@@ -1,23 +1,12 @@
 package org.iclass.board.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.PostsDTO;
-import org.iclass.board.dto.UserDTO;
-import org.iclass.board.entity.PostsEntity;
-import org.iclass.board.entity.UserEntity;
 import org.iclass.board.service.PostsService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-@RestController
-@Slf4j
 @RequiredArgsConstructor
 public class PostsController {
 
@@ -35,14 +24,4 @@ public class PostsController {
         postsService.savePost(post);
         return "redirect:/posts";  // 게시물 목록 페이지로 리다이렉트
     }
-
-
-    /* JPA 구간 */
-    // user_id -> username 치환하기 위한 데이터
-    @GetMapping("/api/posts")
-    public ResponseEntity<?> getPostsWithUsers() {
-        List<Object[]> users = postsService.list();
-        return ResponseEntity.ok(users);
-    }
 }
-

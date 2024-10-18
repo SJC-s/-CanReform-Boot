@@ -1,22 +1,22 @@
 package org.iclass.board.controller;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.iclass.board.dto.UserDTO;
 import org.iclass.board.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @Controller
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("/signup")
     public String showSignupForm(Model model) {
@@ -57,4 +57,21 @@ public class UserController {
         session.invalidate();
         return "redirect:/login"; // 로그아웃 후 로그인 페이지로 리다이렉트
     }
+
+
+
+    /* JPA */
+/*    @PostMapping("/api//login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        User user = userRepository.findByUsername(loginRequest.getUsername());
+
+        if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
+            // 로그인 성공 시 JWT 또는 세션 생성 (예: JWT Token 생성)
+            String token = jwtService.createToken(user);
+            return ResponseEntity.ok(new LoginResponse(token));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: 사용자 정보가 일치하지 않습니다.");
+        }
+    }*/
+
 }
