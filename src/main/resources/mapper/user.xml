@@ -6,8 +6,8 @@
 
     <!-- 사용자 등록 -->
     <insert id="save" parameterType="org.iclass.board.dto.UserDTO">
-        INSERT INTO users (user_id, username, password, email, created_at, is_active)
-        VALUES (user_seq.NEXTVAL, #{username}, #{password}, #{email}, sysdate, 'Y')
+        INSERT INTO users (userId, username, password, email, createdAt, isActive)
+        VALUES (#{userId}, #{username}, #{password}, #{email}, sysdate, 'Y')
     </insert>
 
     <!-- 사용자 이름으로 찾기 -->

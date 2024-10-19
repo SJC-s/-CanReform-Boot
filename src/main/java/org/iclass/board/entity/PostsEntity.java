@@ -22,11 +22,11 @@ public class PostsEntity {
     // JPA 로 테이블을 만들기 위한 클래스
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "POST_ID")
-    private Long post_id;
+    @Column(name = "POSTID")
+    private Long postId;
 
-    @Column(name = "USER_ID", nullable = false)
-    private Long user_id;
+    @Column(name = "USERID", nullable = false)
+    private String userId;
 
     @Column(name = "TITLE", nullable = false, length = 100)
     private String title;
@@ -35,8 +35,8 @@ public class PostsEntity {
     @Column(name = "CONTENT")
     private String content;
 
-    @Column(name = "IS_PRIVATE", nullable = false, length = 1)
-    private char is_private;
+    @Column(name = "ISPRIVATE", nullable = false, length = 1)
+    private char isPrivate;
 
     @Column(name = "CATEGORY", nullable = false, length = 50)
     private String category;
@@ -53,11 +53,11 @@ public class PostsEntity {
     @Column(name = "STATUS", nullable = false, length = 50)
     private String status;
 
-    @Column(name = "CREATED_AT")
-    private LocalDateTime created_at;
+    @Column(name = "CREATEDAT")
+    private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT")
-    private LocalDateTime updated_at;
+    @Column(name = "UPDATEDAT")
+    private LocalDateTime updatedAt;
 
 
 }

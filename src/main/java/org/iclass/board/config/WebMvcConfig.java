@@ -16,7 +16,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
         .allowedOrigins("http://localhost:5173", "http://192.168.0.25:5173")
         .allowedMethods("GET","POST","PUT","PATCH","DELETE","OPTIONS")
-        .allowedHeaders("*")
+        .allowedHeaders("Authorization", "Content-Type")
         .allowCredentials(true)
         .maxAge(MAX_AGE_SECS);
 
