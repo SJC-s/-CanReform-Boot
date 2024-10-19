@@ -1,159 +1,150 @@
-DROP TABLE COMMENTS;
-DROP TABLE RATINGS;
-DROP TABLE REPORTS;
-DROP TABLE SCHEDULE;
-DROP TABLE ESTIMATES;
-DROP TABLE POSTS;
-DROP TABLE USERS;
+DROP TABLE comments;
+DROP TABLE ratings;
+DROP TABLE reports;
+DROP TABLE schedule;
+DROP TABLE estimates;
+DROP TABLE posts;
+DROP TABLE users;
 
--- 1. USERS (회원)
-CREATE TABLE USERS (
-    USER_ID NUMBER(10) PRIMARY KEY,
-    USERNAME VARCHAR2(50) NOT NULL,
-    PASSWORD VARCHAR2(255) NOT NULL,
-    EMAIL VARCHAR2(100) NOT NULL UNIQUE,
-    USERSROLE VARCHAR2(20) DEFAULT 'MEMBER' CHECK (USERSROLE IN ('MEMBER', 'ADMIN')),  -- 역할: 회원, 관리자
-    CREATED_AT DATE DEFAULT SYSDATE,
-    IS_ACTIVE CHAR(1) DEFAULT 'Y' CHECK (IS_ACTIVE IN ('Y', 'N'))  -- 활성화 상태
+-- 1. Users (회원)
+CREATE TABLE users (
+    userId VARCHAR2(50) PRIMARY KEY,
+    password VARCHAR2(255) NOT NULL,
+    username VARCHAR2(50) NOT NULL,
+    email VARCHAR2(100) NOT NULL UNIQUE,
+    usersRole VARCHAR2(20) DEFAULT 'MEMBER' CHECK (usersRole IN ('MEMBER', 'ADMIN')),  -- 역할: 회원, 관리자
+    createdAt DATE DEFAULT SYSDATE,
+    isActive CHAR(1) DEFAULT 'Y' CHECK (isActive IN ('Y', 'N'))  -- 활성화 상태
 );
 
--- USERS 테이블에 테스트 데이터 10개 삽입
-INSERT INTO USERS (USER_ID, USERNAME, EMAIL, PASSWORD, CREATED_AT)
-VALUES (1, 'user1', 'user1@example.com', 'password1', SYSDATE);
+-- 2. Posts (게시판 글)
+CREATE TABLE posts (
+    postId NUMBER(10) PRIMARY KEY,
+    userId VARCHAR2(50) NOT NULL,
+    title VARCHAR2(100) NOT NULL,
+    content CLOB,
+    isPrivate CHAR(1) DEFAULT 'N' CHECK (isPrivate IN ('Y', 'N')),  -- 공개/비공개
+    category VARCHAR2(50) DEFAULT 'Inquiry' CHECK (category IN ('Inquiry', 'request')),
+    createdAt DATE DEFAULT SYSDATE,
+    updatedAt DATE,
+    filenames VARCHAR2(255),
+    readCount NUMBER(10) DEFAULT 0,
+    commentCount NUMBER(10) DEFAULT 0,
+    status VARCHAR2(50) NOT NULL CHECK (status IN ('OPEN', 'CLOSED', 'PENDING')),  -- 게시글 상태
+    CONSTRAINT postsUserIdFk FOREIGN KEY (userId) REFERENCES users(userId)
+);
 
-INSERT INTO USERS (USER_ID, USERNAME, EMAIL, PASSWORD, CREATED_AT)
-VALUES (2, 'user2', 'user2@example.com', 'password2', SYSDATE);
+-- 3. Comments (댓글)
+CREATE TABLE comments (
+    commentId NUMBER(10) PRIMARY KEY,
+    postId NUMBER(10) NOT NULL,
+    userId VARCHAR2(50) NOT NULL,
+    content CLOB,
+    createdAt DATE DEFAULT SYSDATE,
+    CONSTRAINT commentsPostIdFk FOREIGN KEY (postId) REFERENCES posts(postId),
+    CONSTRAINT commentsUserIdFk FOREIGN KEY (userId) REFERENCES users(userId)
+);
 
-INSERT INTO USERS (USER_ID, USERNAME, EMAIL, PASSWORD, CREATED_AT)
-VALUES (3, 'user3', 'user3@example.com', 'password3', SYSDATE);
+-- 4. Ratings (평가 OR 별점)
+CREATE TABLE ratings (
+    ratingId NUMBER(10) PRIMARY KEY,
+    postId NUMBER(10) NOT NULL,
+    userId VARCHAR2(50) NOT NULL,
+    rating NUMBER(2) CHECK (rating BETWEEN 1 AND 5),  -- 별점 1-5
+    review CLOB,
+    createdAt DATE DEFAULT SYSDATE,
+    CONSTRAINT ratingsPostIdFk FOREIGN KEY (postId) REFERENCES posts(postId),
+    CONSTRAINT ratingsUserIdFk FOREIGN KEY (userId) REFERENCES users(userId)
+);
 
-INSERT INTO USERS (USER_ID, USERNAME, EMAIL, PASSWORD, CREATED_AT)
-VALUES (4, 'user4', 'user4@example.com', 'password4', SYSDATE);
+-- 5. Reports (신고)
+CREATE TABLE reports (
+    reportId NUMBER(10) PRIMARY KEY,
+    postId NUMBER(10) NOT NULL,
+    userId VARCHAR2(50) NOT NULL,
+    reason VARCHAR2(255),
+    createdAt DATE DEFAULT SYSDATE,
+    CONSTRAINT reportsPostIdFk FOREIGN KEY (postId) REFERENCES posts(postId),
+    CONSTRAINT reportsUserIdFk FOREIGN KEY (userId) REFERENCES users(userId)
+);
 
-INSERT INTO USERS (USER_ID, USERNAME, EMAIL, PASSWORD, CREATED_AT)
-VALUES (5, 'user5', 'user5@example.com', 'password5', SYSDATE);
+-- 6. Schedule (일정)
+CREATE TABLE schedule (
+    scheduleId NUMBER(10) PRIMARY KEY,
+    userId VARCHAR2(50) NOT NULL,
+    postId NUMBER(10),
+    eventDate DATE,
+    createdAt DATE DEFAULT SYSDATE,
+    CONSTRAINT schedulePostIdFk FOREIGN KEY (postId) REFERENCES posts(postId),
+    CONSTRAINT scheduleUserIdFk FOREIGN KEY (userId) REFERENCES users(userId)
+);
 
--- USER_ID 6부터 10까지 추가 생성
+-- 7. Estimates (견적)
+CREATE TABLE estimates (
+    estimateId NUMBER(10) PRIMARY KEY,
+    postId NUMBER(10) NOT NULL,
+    userId VARCHAR2(50) NOT NULL,
+    estimatedCost NUMBER(12),  -- 예상 비용
+    finalCost NUMBER(12),      -- 최종 비용
+    status VARCHAR2(50) NOT NULL CHECK (status IN ('PENDING', 'APPROVED', 'COMPLETED', 'REJECTED')),  -- 견적 상태
+    createdAt DATE DEFAULT SYSDATE,
+    updatedAt DATE,
+    CONSTRAINT estimatesPostIdFk FOREIGN KEY (postId) REFERENCES posts(postId),
+    CONSTRAINT estimatesUserIdFk FOREIGN KEY (userId) REFERENCES users(userId)
+);
+
+-- Users 테이블에 테스트 데이터 10개 삽입
+INSERT INTO users (userId, username, email, password, createdAt)
+VALUES ('1', 'user1', 'user1@example.com', 'password1', SYSDATE);
+
+INSERT INTO users (userId, username, email, password, createdAt)
+VALUES ('2', 'user2', 'user2@example.com', 'password2', SYSDATE);
+
+INSERT INTO users (userId, username, email, password, createdAt)
+VALUES ('3', 'user3', 'user3@example.com', 'password3', SYSDATE);
+
+INSERT INTO users (userId, username, email, password, createdAt)
+VALUES ('4', 'user4', 'user4@example.com', 'password4', SYSDATE);
+
+INSERT INTO users (userId, username, email, password, createdAt)
+VALUES ('5', 'user5', 'user5@example.com', 'password5', SYSDATE);
+
+-- userId 6부터 10까지 추가 생성
 BEGIN
     FOR i IN 6..10 LOOP
-        INSERT INTO USERS (USER_ID, USERNAME, EMAIL, PASSWORD, CREATED_AT)
-        VALUES (i, 'user' || i, 'user' || i || '@example.com', 'password' || i, SYSDATE);
+        INSERT INTO users (userId, username, email, password, createdAt)
+        VALUES ('id' || i, 'user' || i, 'user' || i || '@example.com', 'password' || i, SYSDATE);
     END LOOP;
 END;
 /
--- 2. POSTS(게시판 글)
-CREATE TABLE POSTS (
-    POST_ID NUMBER(10) PRIMARY KEY,
-    USER_ID NUMBER(10) NOT NULL,
-    TITLE VARCHAR2(100) NOT NULL,
-    CONTENT CLOB,
-    IS_PRIVATE CHAR(1) DEFAULT 'N' CHECK (IS_PRIVATE IN ('Y', 'N')),  -- 공개/비공개
-    CATEGORY VARCHAR2(50) DEFAULT 'Inquiry' CHECK(CATEGORY IN('Inquiry', 'request')),
-    CREATED_AT DATE DEFAULT SYSDATE,
-    UPDATED_AT DATE,
-	FILENAMES VARCHAR2(255),
-	READCOUNT NUMBER(10) DEFAULT '0',
-	COMMENTCOUNT NUMBER(10) DEFAULT '0',
-    STATUS VARCHAR2(50) NOT NULL CHECK (STATUS IN ('OPEN', 'CLOSED', 'PENDING')),  -- 게시글 상태
-    CONSTRAINT POSTS_USERID_FK FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)
-);
 
+-- Posts 테이블에 50개의 테스트 데이터 삽입
+INSERT INTO posts (postId, userId, title, content, isPrivate, category, createdAt, updatedAt, filenames, readCount, commentCount, status)
+VALUES (1, 'id1', '첫 번째 게시글', '이것은 테스트 콘텐츠입니다.', 'N', 'Inquiry', SYSDATE, SYSDATE, 'file1.txt', 10, 5, 'OPEN');
 
--- POSTS 테이블에 50개의 테스트 데이터 삽입
-INSERT INTO POSTS (POST_ID, USER_ID, TITLE, CONTENT, IS_PRIVATE, CATEGORY, CREATED_AT, UPDATED_AT, FILENAMES, READCOUNT, COMMENTCOUNT, STATUS)
-VALUES (1, 1, '첫 번째 게시글', '이것은 테스트 콘텐츠입니다.', 'N', 'Inquiry', SYSDATE, SYSDATE, 'file1.txt', 10, 5, 'OPEN');
-
-INSERT INTO POSTS (POST_ID, USER_ID, TITLE, CONTENT, IS_PRIVATE, CATEGORY, CREATED_AT, UPDATED_AT, FILENAMES, READCOUNT, COMMENTCOUNT, STATUS)
-VALUES (2, 2, '두 번째 게시글', '이것은 테스트 콘텐츠입니다.', 'Y', 'request', SYSDATE, SYSDATE, 'file2.txt', 20, 10, 'CLOSED');
+INSERT INTO posts (postId, userId, title, content, isPrivate, category, createdAt, updatedAt, filenames, readCount, commentCount, status)
+VALUES (2, 'id2', '두 번째 게시글', '이것은 테스트 콘텐츠입니다.', 'Y', 'request', SYSDATE, SYSDATE, 'file2.txt', 20, 10, 'CLOSED');
 
 -- 나머지 48개의 레코드 생성
 BEGIN
     FOR i IN 3..50 LOOP
-        INSERT INTO POSTS (POST_ID, USER_ID, TITLE, CONTENT, IS_PRIVATE, CATEGORY, CREATED_AT, UPDATED_AT, FILENAMES, READCOUNT, COMMENTCOUNT, STATUS)
-        VALUES (i, MOD(i, 10) + 1, '게시글 ' || i, '이것은 테스트 콘텐츠입니다. 번호: ' || i, 
+        INSERT INTO posts (postId, userId, title, content, isPrivate, category, createdAt, updatedAt, filenames, readCount, commentCount, status)
+        VALUES (i, 'id' || TO_CHAR(MOD(i, 10) + 1), '게시글 ' || TO_CHAR(i), '이것은 테스트 콘텐츠입니다. 번호: ' || TO_CHAR(i), 
                 CASE WHEN MOD(i, 2) = 0 THEN 'Y' ELSE 'N' END, 
                 CASE WHEN MOD(i, 3) = 0 THEN 'request' ELSE 'Inquiry' END,
                 SYSDATE - MOD(i, 7), SYSDATE, 
-                'file' || i || '.txt', 
+                'file' || TO_CHAR(i) || '.txt', 
                 MOD(i, 100), MOD(i, 50), 
                 CASE WHEN MOD(i, 4) = 0 THEN 'PENDING' WHEN MOD(i, 4) = 1 THEN 'OPEN' ELSE 'CLOSED' END);
     END LOOP;
 END;
-
 /
 
-
-
-
-
-
--- 3. COMMENTS(댓글)
-CREATE TABLE COMMENTS (
-    COMMENT_ID NUMBER(10) PRIMARY KEY,
-    POST_ID NUMBER(10) NOT NULL,
-    USER_ID NUMBER(10) NOT NULL,
-    CONTENT CLOB,
-    CREATED_AT DATE DEFAULT SYSDATE,
-    FOREIGN KEY (POST_ID) REFERENCES POSTS(POST_ID),
-    FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)
-);
-
-
--- 4. RATINGS(평가 OR 별점)
-CREATE TABLE RATINGS (
-    RATING_ID NUMBER(10) PRIMARY KEY,
-    POST_ID NUMBER(10) NOT NULL,
-    USER_ID NUMBER(10) NOT NULL,
-    RATING NUMBER(2) CHECK (RATING BETWEEN 1 AND 5),  -- 별점 1-5
-    REVIEW CLOB,
-    CREATED_AT DATE DEFAULT SYSDATE,
-    FOREIGN KEY (POST_ID) REFERENCES POSTS(POST_ID),
-    FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)
-);
-
--- 5. REPORTS(신고)
-CREATE TABLE REPORTS (
-    REPORT_ID NUMBER(10) PRIMARY KEY,
-    POST_ID NUMBER(10) NOT NULL,
-    USER_ID NUMBER(10) NOT NULL,
-    REASON VARCHAR2(255),
-    CREATED_AT DATE DEFAULT SYSDATE,
-    FOREIGN KEY (POST_ID) REFERENCES POSTS(POST_ID),
-    FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)
-);
-
-
--- 6. SCHEDULE(일정)
-CREATE TABLE SCHEDULE (
-    SCHEDULE_ID NUMBER(10) PRIMARY KEY,
-    USER_ID NUMBER(10) NOT NULL,
-    POST_ID NUMBER(10),
-    EVENT_DATE DATE,
-    CREATED_AT DATE DEFAULT SYSDATE,
-    FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID),
-    FOREIGN KEY (POST_ID) REFERENCES POSTS(POST_ID)
-);
-
-
--- 7. ESTIMATES(견적)
-CREATE TABLE ESTIMATES (
-    ESTIMATE_ID NUMBER(10) PRIMARY KEY,
-    POST_ID NUMBER(10) NOT NULL,
-    USER_ID NUMBER(10) NOT NULL,
-    ESTIMATED_COST NUMBER(12),  -- 예상 비용
-    FINAL_COST NUMBER(12),      -- 최종 비용
-    STATUS VARCHAR2(50) NOT NULL CHECK (STATUS IN ('PENDING', 'APPROVED', 'COMPLETED', 'REJECTED')),  -- 견적 상태
-    CREATED_AT DATE DEFAULT SYSDATE,
-    UPDATED_AT DATE,
-    FOREIGN KEY (POST_ID) REFERENCES POSTS(POST_ID),
-    FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)
-);
-
-
-SELECT * FROM COMMENTS;
-SELECT * FROM RATINGS;
-SELECT * FROM REPORTS;
-SELECT * FROM SCHEDULE;
-SELECT * FROM ESTIMATES;
-SELECT * FROM POSTS;
-SELECT * FROM USERS;
+-- 선택 쿼리
+SELECT * FROM comments;
+SELECT * FROM ratings;
+SELECT * FROM reports;
+SELECT * FROM schedule;
+SELECT * FROM estimates;
+SELECT * FROM posts;
+SELECT * FROM users;

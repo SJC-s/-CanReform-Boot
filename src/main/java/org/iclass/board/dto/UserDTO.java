@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class UserDTO {
-    private Long user_id;
+    private String userId;
     private String username;
     private String password;
     private String email;
-    private String usersrole;
-    private LocalDateTime created_at;
-    private char is_active;
+    private String usersRole;
+    private LocalDateTime createdAt;
+    private char isActive;
 
 
 
@@ -26,9 +26,9 @@ public class UserDTO {
     public static UserDTO of(UserEntity entity) {
         return UserDTO.builder()
                 .email(entity.getEmail())
-                .is_active(entity.getIs_active())
-                .user_id(entity.getUser_id())
-                .usersrole(entity.getUsersrole())
+                .isActive(entity.getIsActive())
+                .userId(entity.getUserId())
+                .usersRole(entity.getUsersRole())
                 .password(entity.getPassword())
                 .username(entity.getUsername())
                 .build();
@@ -37,9 +37,9 @@ public class UserDTO {
     public UserEntity toEntity() {
         return UserEntity.builder()
                 .email(this.email)
-                .usersrole(this.usersrole)
-                .is_active(this.is_active)
-                .user_id(this.user_id)
+                .usersRole(this.usersRole)
+                .isActive(this.isActive)
+                .userId(this.userId)
                 .password(this.password)
                 .username(this.username)
                 .build();

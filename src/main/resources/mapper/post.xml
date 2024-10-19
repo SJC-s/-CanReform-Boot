@@ -5,7 +5,7 @@
 <mapper namespace="org.iclass.board.dao.PostsMapper">
 
     <insert id="savePost" parameterType="org.iclass.board.dto.PostsDTO">
-        INSERT INTO posts (post_id, user_id, title, content, is_private, category, created_at, filenames, status)
+        INSERT INTO posts (postId, userId, title, content, isPrivate, category, createdAt, filenames, status)
         VALUES (#{postId}, #{userId}, #{title}, #{content}, #{isPrivate}, #{category}, sysdate, #{filenames}, #{status})
     </insert>
 

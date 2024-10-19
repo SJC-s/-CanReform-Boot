@@ -27,10 +27,10 @@ public class UserService {
         return userMapper.findByUsername(username);
     }
 
-    public UserDTO login(String username, String password) {
+    public UserDTO login(String userId, String password) {
         // 파라미터를 Map 으로 전달
         Map<String, Object> params = new HashMap<>();
-        params.put("username", username);
+        params.put("username", userId);
         params.put("password", password);
 
         // Mapper 메서드 호출
@@ -43,14 +43,15 @@ public class UserService {
     public UserDTO signup(UserDTO dto) {
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
         dto.setPassword(encodedPassword);
+        userMapper.save(dto);
         UserEntity entity = dto.toEntity();
-        userRepository.save(entity);
+        //userRepository.save(entity);
 
         return UserDTO.of(entity);
     }
 
-    public boolean checkUsernameExists(String username) {
-        return userRepository.existsByUsername(username);
+    public boolean checkUsernameExists(String userId) {
+        return userRepository.existsByUserId(userId);
     }
 
 }

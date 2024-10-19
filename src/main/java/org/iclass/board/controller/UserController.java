@@ -25,7 +25,7 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(UserDTO user, Model model) {
-        UserDTO authenticatedUser = userService.login(user.getUsername(), user.getPassword());
+        UserDTO authenticatedUser = userService.login(user.getUserId(), user.getPassword());
 
         if (authenticatedUser == null) {
             model.addAttribute("errorMessage", "사용자 이름이나 비밀번호가 올바르지 않습니다.");

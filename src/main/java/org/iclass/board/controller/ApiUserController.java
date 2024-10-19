@@ -24,9 +24,9 @@ public class ApiUserController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/check-username")
-    public ResponseEntity<?> checkUsername(@RequestParam String username) {
-        boolean exists = userService.checkUsernameExists(username);
+    @GetMapping("/check-userId")
+    public ResponseEntity<?> checkUsername(@RequestParam String userId) {
+        boolean exists = userService.checkUsernameExists(userId);
         return ResponseEntity.ok(exists);
     }
 }

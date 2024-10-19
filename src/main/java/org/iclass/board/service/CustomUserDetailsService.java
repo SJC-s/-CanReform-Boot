@@ -21,12 +21,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     public final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("Response Email : {}", username);
-        UserEntity entity = userRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        log.info("Response Email : {}", userId);
+        UserEntity entity = userRepository.findByUserId(userId);
         log.info("Response Entity : {}", entity);
         if(entity == null){
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException(userId);
         }
 
         UserDTO dto = UserDTO.of(entity);
@@ -35,7 +35,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserDetails userDetails = UserAccountDTO.builder()
                 .username(dto.getUsername())
                 .password(dto.getPassword())
-                .authorities(new SimpleGrantedAuthority(dto.getUsersrole()))
+                .authorities(new SimpleGrantedAuthority(dto.getUsersRole()))
                 .build();
         log.info("CustomUserDetailsService.userDetails : {}", userDetails);
         return userDetails;

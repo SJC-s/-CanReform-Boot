@@ -15,18 +15,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostsDTO {
-    private Long post_id;
-    private Long user_id;
+    private Long postId;
+    private String userId;
     private String title;
     private String content;
-    private char is_private;
+    private char isPrivate;
     private String category;
     private String filenames;
     private Integer readCount;
     private Integer commentCount;
     private String status;
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     // 업로드 파일을 저장하기 위한 객체
     private MultipartFile file;
@@ -36,34 +36,34 @@ public class PostsDTO {
 
     public static PostsDTO of(PostsEntity entity) {
         return PostsDTO.builder()
-                .post_id(entity.getPost_id())
-                .user_id(entity.getUser_id())
+                .postId(entity.getPostId())
+                .userId(entity.getUserId())
                 .title(entity.getTitle())
                 .content(entity.getContent())
-                .is_private(entity.getIs_private())
+                .isPrivate(entity.getIsPrivate())
                 .category(entity.getCategory())
                 .filenames(entity.getFilenames())
                 .readCount(entity.getReadCount())
                 .commentCount(entity.getCommentCount())
                 .status(entity.getStatus())
-                .created_at(entity.getCreated_at())
-                .updated_at(entity.getUpdated_at())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
                 .build();
     }
 
     public PostsEntity toEntity() {
         return PostsEntity.builder()
-                .post_id(post_id)
-                .user_id(user_id)
+                .postId(postId)
+                .userId(userId)
                 .title(title)
                 .content(content)
-                .is_private(is_private)
+                .isPrivate(isPrivate)
                 .category(category)
                 .filenames(filenames)
                 .readCount(readCount)
                 .commentCount(commentCount)
                 .status(status)
-                .updated_at(updated_at)
+                .updatedAt(updatedAt)
                 .build();
     }
 

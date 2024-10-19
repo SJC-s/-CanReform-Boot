@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -21,25 +23,25 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USER_ID")
-    private Long user_id;
+    @Column(name = "USERID")
+    private String userId;
 
     @Column(name = "USERNAME", nullable = false, length = 50)
     private String username;
 
-    @Column(name = "EMAIL", nullable = false, length = 100)
+    @Column(name = "EMAIL", nullable = false, length = 100, unique = true)
     private String email;
 
-    @Column(name = "IS_ACTIVE", nullable = false, length = 1)
-    private char is_active;
+    @Column(name = "ISACTIVE", nullable = false, length = 1)
+    private char isActive;
 
     @Column(name = "PASSWORD", nullable = false, length = 255)
     public String password;
 
     @Column(name = "USERSROLE", nullable = false)
-    private String usersrole;
+    private String usersRole;
 
     @CreatedDate
-    @Column(name = "CREATED_AT")
-    private LocalDateTime created_at;
+    @Column(name = "CREATEDAT")
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
