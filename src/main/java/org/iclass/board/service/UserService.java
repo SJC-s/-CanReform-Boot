@@ -1,6 +1,7 @@
 package org.iclass.board.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.iclass.board.dao.UserMapper;
 import org.iclass.board.dto.UserDTO;
 import org.iclass.board.entity.UserEntity;
@@ -27,18 +28,23 @@ public class UserService {
         return userMapper.findByUsername(username);
     }
 
-    public UserDTO login(String userId, String password) {
-        // 파라미터를 Map 으로 전달
-        Map<String, Object> params = new HashMap<>();
-        params.put("username", userId);
-        params.put("password", password);
-
-        // Mapper 메서드 호출
-        return userMapper.findByUsernameAndPassword(params);
-    }
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+
+    public UserEntity login(String userId, String password) {
+        // 이메일을 기반으로 사용자 찾기
+        UserEntity user = userRepository.findByUserId(userId);
+
+        // 사용자가 존재하고, 비밀번호가 일치하면 로그인 성공
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        }
+
+        // 로그인 실패 시 null 반환
+        return null;
+    }
+
 
     public UserDTO signup(UserDTO dto) {
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
