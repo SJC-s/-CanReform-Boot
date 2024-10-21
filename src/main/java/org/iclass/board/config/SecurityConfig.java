@@ -59,25 +59,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-
-    // 커스텀 필터 설정
-    public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
-        @Override
-        public void configure(HttpSecurity http) throws Exception {
-            AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-
-            // JwtAuthenticationFilter 인스턴스 생성
-            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, tokenProvider);
-            jwtAuthenticationFilter.setFilterProcessesUrl("/api/login");
-
-            // JwtAuthorizationFilter 인스턴스 생성
-            JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(authenticationManager, tokenProvider);
-
-            // 필터 체인에 필터 추가
-            http
-                    .addFilter(jwtAuthenticationFilter)
-                    .addFilterBefore(jwtAuthorizationFilter, JwtAuthenticationFilter.class);
-        }
-    }
 }

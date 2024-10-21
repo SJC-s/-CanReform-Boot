@@ -2,9 +2,9 @@ package org.iclass.board.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.iclass.board.jwt.JwtTokenUtil;
 import org.iclass.board.dto.UserDTO;
 import org.iclass.board.entity.UserEntity;
+import org.iclass.board.jwt.TokenProvider;
 import org.iclass.board.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class ApiUserController {
 
     private final UserService userService;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final TokenProvider tokenProvider;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
@@ -28,7 +28,7 @@ public class ApiUserController {
 
         if (user != null) {
             // 로그인 성공 JWT 토큰 생성
-            String token = jwtTokenUtil.generateToken(user.getUserId());
+            String token = tokenProvider.generateToken(user.getUserId());
 
             // 응답 데이터 구성
             Map<String, Object> response = new HashMap<>();

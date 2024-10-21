@@ -18,8 +18,12 @@ import java.io.IOException;
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
+
+    public JwtAuthenticationFilter(TokenProvider tokenProvider, AuthenticationManager authenticationManager) {
+        this.tokenProvider = tokenProvider;
+        setAuthenticationManager(authenticationManager);
+    }
 
     // 인증 시도
     @Override
@@ -34,19 +38,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     new UsernamePasswordAuthenticationToken(loginParam.getUserId(), loginParam.getPassword());
 
             // 인증
-            return authenticationManager.authenticate(authenticationToken);
+            return getAuthenticationManager().authenticate(authenticationToken);
         } catch (IOException e) {
             throw new RuntimeException("요청 본문을 파싱하는 데 실패했습니다.", e);
         }
     }
 
-
     // 인증 성공 시
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // 토큰 생성
-        UserDetails userDetails = (UserDetails) authResult.getPrincipal();
-        String jwt = tokenProvider.generateToken(userDetails.getUsername());
+        String jwt = tokenProvider.generateToken(authResult.getName());
         TokenResponseDTO tokenResponse = new TokenResponseDTO(jwt);
 
         // response body에 토큰 DTO 반환
