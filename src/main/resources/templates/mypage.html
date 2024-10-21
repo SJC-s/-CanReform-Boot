@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"><!-- 스타일시트 링크 추가 -->
+</head>
+<body>
+<div class="mypage-container">
+    <h2>마이페이지</h2>
+    <div class="user-info">
+        <p><strong>아이디:</strong> <span th:text="${user.username}"></span></p>
+        <p><strong>이메일:</strong> <span th:text="${user.email}"></span></p>
+    </div>
+
+    <div class="actions">
+        <a class="button" th:href="@{/mypage/edit}">정보 수정</a>
+        <form th:action="@{/mypage/delete}" method="post" style="display: inline;">
+            <button class="button delete-button" type="submit">계정 삭제</button>
+        </form>
+        <a class="button" th:href="@{/logout}">로그아웃</a>
+    </div>
+</div>
+</body>
+</html>
