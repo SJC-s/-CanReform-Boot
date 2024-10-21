@@ -1,6 +1,7 @@
 package org.iclass.board.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
 import org.iclass.board.dao.UserMapper;
 import org.iclass.board.dto.UserDTO;
@@ -16,6 +17,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class UserService {
     private final UserMapper userMapper;
 
@@ -33,7 +35,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public UserEntity login(String userId, String password) {
-        // 이메일을 기반으로 사용자 찾기
+        // 아이디를 기반으로 사용자 찾기
         UserEntity user = userRepository.findByUserId(userId);
 
         // 사용자가 존재하고, 비밀번호가 일치하면 로그인 성공
