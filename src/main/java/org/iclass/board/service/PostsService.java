@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dao.PostsMapper;
 import org.iclass.board.dto.PostsDTO;
+import org.iclass.board.entity.PostsEntity;
 import org.iclass.board.repository.PostsRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

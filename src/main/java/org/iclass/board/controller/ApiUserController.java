@@ -2,8 +2,7 @@ package org.iclass.board.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.iclass.board.dto.UserDTO;
-import org.iclass.board.entity.UserEntity;
+import org.iclass.board.dto.UsersDTO;
 import org.iclass.board.jwt.TokenProvider;
 import org.iclass.board.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -27,11 +26,11 @@ public class ApiUserController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> login(@RequestBody UsersDTO usersDTO) {
         try {
             // 1. UsernamePasswordAuthenticationToken 생성
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword());
+                    new UsernamePasswordAuthenticationToken(usersDTO.getUsername(), usersDTO.getPassword());
 
             // 2. AuthenticationManager를 통해 인증 시도
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -54,8 +53,8 @@ public class ApiUserController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody UserDTO dto){
-        UserDTO result = userService.signup(dto);
+    public ResponseEntity<?> signup(@RequestBody UsersDTO dto){
+        UsersDTO result = userService.signup(dto);
         return ResponseEntity.ok(result);
     }
 

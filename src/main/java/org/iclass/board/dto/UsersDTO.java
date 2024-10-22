@@ -1,7 +1,7 @@
 package org.iclass.board.dto;
 
 import lombok.*;
-import org.iclass.board.entity.UserEntity;
+import org.iclass.board.entity.UsersEntity;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserDTO {
+public class UsersDTO {
     private String userId;
     private String username;
     private String password;
@@ -23,8 +23,8 @@ public class UserDTO {
 
 
     /* JPA 구간 */
-    public static UserDTO of(UserEntity entity) {
-        return UserDTO.builder()
+    public static UsersDTO of(UsersEntity entity) {
+        return UsersDTO.builder()
                 .email(entity.getEmail())
                 .isActive(entity.getIsActive())
                 .userId(entity.getUserId())
@@ -34,8 +34,8 @@ public class UserDTO {
                 .build();
     }
 
-    public UserEntity toEntity() {
-        return UserEntity.builder()
+    public UsersEntity toEntity() {
+        return UsersEntity.builder()
                 .email(this.email)
                 .usersRole(this.usersRole)
                 .isActive(this.isActive)

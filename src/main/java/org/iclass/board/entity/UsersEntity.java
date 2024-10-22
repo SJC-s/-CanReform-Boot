@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "USERS") // USER 테이블과 매핑
-public class UserEntity {
+public class UsersEntity {
 
     @Id
     @Column(name = "USERID", nullable = false, length = 50)
