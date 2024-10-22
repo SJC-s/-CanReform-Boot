@@ -95,19 +95,19 @@ CREATE TABLE estimates (
 
 -- Users 테이블에 테스트 데이터 10개 삽입
 INSERT INTO users (userId, username, email, password, createdAt)
-VALUES ('1', 'user1', 'user1@example.com', 'password1', SYSDATE);
+VALUES ('id1', 'user1', 'user1@example.com', 'password1', SYSDATE);
 
 INSERT INTO users (userId, username, email, password, createdAt)
-VALUES ('2', 'user2', 'user2@example.com', 'password2', SYSDATE);
+VALUES ('id2', 'user2', 'user2@example.com', 'password2', SYSDATE);
 
 INSERT INTO users (userId, username, email, password, createdAt)
-VALUES ('3', 'user3', 'user3@example.com', 'password3', SYSDATE);
+VALUES ('id3', 'user3', 'user3@example.com', 'password3', SYSDATE);
 
 INSERT INTO users (userId, username, email, password, createdAt)
-VALUES ('4', 'user4', 'user4@example.com', 'password4', SYSDATE);
+VALUES ('id4', 'user4', 'user4@example.com', 'password4', SYSDATE);
 
 INSERT INTO users (userId, username, email, password, createdAt)
-VALUES ('5', 'user5', 'user5@example.com', 'password5', SYSDATE);
+VALUES ('id5', 'user5', 'user5@example.com', 'password5', SYSDATE);
 
 -- userId 6부터 10까지 추가 생성
 BEGIN

@@ -1,20 +1,24 @@
 package org.iclass.board.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DialectOverride;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Builder
-@Data     // 불변객체 관련된 메소드 재정의
-@NoArgsConstructor
-@AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 @Entity
+@Data     // 불변객체 관련된 메소드 재정의
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@DynamicInsert // @DynamicInsert와 @DynamicUpdate는 해당값이 입력되지 않았을때(null), INSERT, UPDATE에서 null인 value를 제외하는 어노테이션
+@DynamicUpdate
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "POSTS")
 public class PostsEntity {
 
@@ -40,20 +44,23 @@ public class PostsEntity {
     @Column(name = "CATEGORY", nullable = false, length = 50)
     private String category;
 
-    @Column(name = "FILENAMES", length = 255)
+    @Column(name = "FILENAMES")
     private String filenames;
 
-    @Column(name = "READCOUNT", nullable = false)
-    private Integer readCount;
+    @Column(name = "READCOUNT")
+    @ColumnDefault("0")
+    private Integer readCount = 0;
 
-    @Column(name = "COMMENTCOUNT", nullable = false)
+    @Column(name = "COMMENTCOUNT")
+    @ColumnDefault("0")
     private Integer commentCount;
 
-    @Column(name = "STATUS", nullable = false, length = 50)
-    private String status;
+    @Column(name = "STATUS", length = 50)
+    private String status = "OPEN";
 
     @Column(name = "CREATEDAT")
-    private LocalDateTime createdAt;
+    @CreatedDate
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "UPDATEDAT")
     private LocalDateTime updatedAt;
@@ -62,19 +69,19 @@ public class PostsEntity {
 }
 
 /*
-CREATE TABLE POSTS (
-    POST_ID NUMBER(10) PRIMARY KEY,
-    USER_ID NUMBER(10) NOT NULL,
-    TITLE VARCHAR2(100) NOT NULL,
-    CONTENT CLOB,
-    IS_PRIVATE CHAR(1) DEFAULT 'N' CHECK (IS_PRIVATE IN ('Y', 'N')),  -- 공개/비공개
-    CATEGORY VARCHAR2(50) NOT NULL DEFAULT 'Inquiry' CHECK(CATEGORY IN('Inquiry', 'request')),
-    CREATED_AT DATE DEFAULT SYSDATE,
-    UPDATED_AT DATE,
-	FILENAMES VARCHAR2(255),
-	READCOUNT NUMBER(10) DEFAULT 0,
-	COMMENTCOUNT NUMBER(10) DEFAULT 0,
-    STATUS VARCHAR2(50) NOT NULL CHECK (STATUS IN ('OPEN', 'CLOSED', 'PENDING')),  -- 게시글 상태
-    FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)
+CREATE TABLE posts (
+    postId NUMBER(10) PRIMARY KEY,
+    userId VARCHAR2(50) NOT NULL,
+    title VARCHAR2(100) NOT NULL,
+    content CLOB,
+    isPrivate CHAR(1) DEFAULT 'N' CHECK (isPrivate IN ('Y', 'N')),  -- 공개/비공개
+    category VARCHAR2(50) DEFAULT 'Inquiry' CHECK (category IN ('Inquiry', 'request')),
+    createdAt DATE DEFAULT SYSDATE,
+    updatedAt DATE,
+    filenames VARCHAR2(255),
+    readCount NUMBER(10) DEFAULT 0,
+    commentCount NUMBER(10) DEFAULT 0,
+    status VARCHAR2(50) NOT NULL CHECK (status IN ('OPEN', 'CLOSED', 'PENDING')),  -- 게시글 상태
+    CONSTRAINT postsUserIdFk FOREIGN KEY (userId) REFERENCES users(userId)
 );
  */
