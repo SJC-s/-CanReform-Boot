@@ -3,7 +3,7 @@ package org.iclass.board.service;
 import lombok.RequiredArgsConstructor;
 import org.iclass.board.dao.UserMapper;
 import org.iclass.board.dto.UserDTO;
-import org.iclass.board.entity.UsersEntity;
+import org.iclass.board.entity.UserEntity;
 import org.iclass.board.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
         dto.setPassword(encodedPassword);
         userMapper.save(dto);
-        UsersEntity entity = dto.toEntity();
+        UserEntity entity = dto.toEntity();
         //userRepository.save(entity);
 
         return UserDTO.of(entity);

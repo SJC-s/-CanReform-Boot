@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.UserAccountDTO;
 import org.iclass.board.dto.UserDTO;
-import org.iclass.board.entity.UsersEntity;
+import org.iclass.board.entity.UserEntity;
 import org.iclass.board.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         log.info("Response Email : {}", userId);
-        UsersEntity entity = userRepository.findByUserId(userId);
+        UserEntity entity = userRepository.findByUserId(userId);
         log.info("Response Entity : {}", entity);
         if(entity == null){
             throw new UsernameNotFoundException(userId);

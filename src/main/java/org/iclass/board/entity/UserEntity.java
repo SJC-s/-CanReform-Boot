@@ -11,13 +11,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Builder
-@Data
+@Data // 불변객체 관련된 메소드 재정의
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-@Table(name = "USERS")
-public class UsersEntity {
+@Table(name = "USERS") // USER 테이블과 매핑
+public class UserEntity {
 
     @Id
     @Column(name = "USERID", nullable = false, length = 50)
