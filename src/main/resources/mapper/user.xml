@@ -5,17 +5,17 @@
 <mapper namespace="org.iclass.board.dao.UserMapper">
 
     <!-- 사용자 등록 -->
-    <insert id="save" parameterType="org.iclass.board.dto.UsersDTO">
+    <insert id="save" parameterType="org.iclass.board.dto.UserDTO">
         INSERT INTO users (userId, username, password, email, createdAt, isActive)
         VALUES (#{userId}, #{username}, #{password}, #{email}, sysdate, 'Y')
     </insert>
 
     <!-- 사용자 이름으로 찾기 -->
-    <select id="findByUsername" parameterType="String" resultType="org.iclass.board.dto.UsersDTO">
+    <select id="findByUsername" parameterType="String" resultType="org.iclass.board.dto.UserDTO">
         SELECT * FROM users WHERE username = #{username}
     </select>
 
-    <select id="findByUsernameAndPassword" parameterType="map" resultType="org.iclass.board.dto.UsersDTO">
+    <select id="findByUsernameAndPassword" parameterType="map" resultType="org.iclass.board.dto.UserDTO">
         SELECT * FROM users
         WHERE username = #{username} AND password = #{password}
     </select>

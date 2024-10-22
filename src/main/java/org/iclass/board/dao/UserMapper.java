@@ -1,14 +1,14 @@
 package org.iclass.board.dao;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.iclass.board.dto.UsersDTO;
+import org.iclass.board.dto.UserDTO;
 
 import java.util.Map;
 
 @Mapper
 public interface UserMapper {
-    void save(UsersDTO user);
-    UsersDTO findByUsername(String username);
+    void save(UserDTO user);
+    UserDTO findByUsername(String username);
 
-    UsersDTO findByUsernameAndPassword(Map<String, Object> params);
+    UserDTO findByUsernameAndPassword(Map<String, Object> params);
 }

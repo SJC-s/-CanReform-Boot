@@ -2,7 +2,7 @@ package org.iclass.board.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.iclass.board.dto.UsersDTO;
+import org.iclass.board.dto.UserDTO;
 import org.iclass.board.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,8 +22,8 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public String login(UsersDTO user, Model model) {
-        UsersDTO authenticatedUser = userService.login(user.getUserId(), user.getPassword());
+    public String login(UserDTO user, Model model) {
+        UserDTO authenticatedUser = userService.login(user.getUserId(), user.getPassword());
 
         if (authenticatedUser == null) {
             model.addAttribute("errorMessage", "사용자 이름이나 비밀번호가 올바르지 않습니다.");
@@ -36,9 +36,9 @@ public class UserController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody UsersDTO dto){
+    public ResponseEntity<?> signup(@RequestBody UserDTO dto){
         log.info("dtoadfasdfasdf124124124{}", dto.toString());
-        UsersDTO result = userService.signup(dto);
+        UserDTO result = userService.signup(dto);
         return ResponseEntity.ok(result);
     }
 

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UsersDTO {
+public class UserDTO {
     private String userId;
     private String username;
     private String password;
@@ -23,8 +23,8 @@ public class UsersDTO {
 
 
     /* JPA 구간 */
-    public static UsersDTO of(UsersEntity entity) {
-        return UsersDTO.builder()
+    public static UserDTO of(UsersEntity entity) {
+        return UserDTO.builder()
                 .email(entity.getEmail())
                 .isActive(entity.getIsActive())
                 .userId(entity.getUserId())

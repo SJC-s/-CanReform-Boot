@@ -3,7 +3,7 @@ package org.iclass.board.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.UserAccountDTO;
-import org.iclass.board.dto.UsersDTO;
+import org.iclass.board.dto.UserDTO;
 import org.iclass.board.entity.UsersEntity;
 import org.iclass.board.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException(userId);
         }
 
-        UsersDTO dto = UsersDTO.of(entity);
+        UserDTO dto = UserDTO.of(entity);
         log.info(dto.toString());
 
         UserDetails userDetails = UserAccountDTO.builder()
