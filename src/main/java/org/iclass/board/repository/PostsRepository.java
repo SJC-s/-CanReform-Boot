@@ -1,7 +1,6 @@
 package org.iclass.board.repository;
 
 import org.iclass.board.entity.PostsEntity;
-import org.iclass.board.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,8 +19,20 @@ public interface PostsRepository extends JpaRepository<PostsEntity, Long> {
     List<Object[]> getPostsWithUsers();
 
 
-    @Query("SELECT p FROM PostsEntity p WHERE (:category = 'all' OR p.category = :category) AND p.title LIKE %:search% ORDER BY p.createdAt desc")
-    Page<PostsEntity> findByCategoryAndTitleContainingOrderByCreatedAtDesc(Pageable pageable, String category, String search);
+    // Post 검색 조건별 검색 메서드
+    @Query("SELECT p FROM PostsEntity p " +
+            "JOIN UserEntity u ON p.userId = u.userId " +
+            "WHERE (:category = 'all' OR p.category = :category) " +
+            "AND (" +
+            "  (:searchClass = 'title' AND p.title LIKE %:search%) OR " +      // 제목 검색
+            "  (:searchClass = 'username' AND u.username LIKE %:search%) OR " + // 작성자 검색
+            "  (:searchClass = 'content' AND p.content LIKE %:search%) OR " +   // 내용 검색
+            "  (:searchClass = 'all' AND (p.title LIKE %:search% OR u.username LIKE %:search% OR p.content LIKE %:search%))" + // 전체 검색
+            ") " +
+            "ORDER BY p.createdAt DESC")
+
+    // @Query("SELECT p FROM PostsEntity p WHERE (:category = 'all' OR p.category = :category) AND p.title LIKE %:search% ORDER BY p.createdAt desc")
+    Page<PostsEntity> findByCategoryAndTitleContainingOrderByCreatedAtDesc(Pageable pageable, String category, String search, String searchClass);
 
     Optional<PostsEntity> findByPostId(Long postId);
 }

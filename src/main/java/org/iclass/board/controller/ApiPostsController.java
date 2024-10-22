@@ -27,13 +27,14 @@ public class ApiPostsController {
         @RequestParam(defaultValue = "1") int page,  // 페이지 번호 (기본값 1)
         @RequestParam(defaultValue = "5") int limit, // 페이지 당 게시글 수 (기본값 5)
         @RequestParam(defaultValue = "") String search,  // 검색어 (기본값 "")
-        @RequestParam(defaultValue = "all") String category  // 카테고리 필터 (기본값 "all")
+        @RequestParam(defaultValue = "all") String category,  // 카테고리 필터 (기본값 "all")
+        @RequestParam(defaultValue = "all") String searchClass // 검색 분류 필터 (기본값 "all")
     ) {
         if (page < 1) {
             throw new IllegalArgumentException("Page index must not be less than 1");
         }
         Pageable pageable = PageRequest.of(page - 1, limit);  // 페이지 번호를 0 기반으로 변환
-        Page<PostsDTO> dto = postsService.getFilteredPosts(pageable, search, category);
+        Page<PostsDTO> dto = postsService.getFilteredPosts(pageable, search, category, searchClass);
         log.info("dkfjdlfjdlf : {}",dto.toString());
         return ResponseEntity.ok(dto);
     }
