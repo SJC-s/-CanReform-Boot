@@ -49,7 +49,7 @@ public class PostsEntity {
 
     @Column(name = "READCOUNT")
     @ColumnDefault("0")
-    private Integer readCount = 0;
+    private Integer readCount;
 
     @Column(name = "COMMENTCOUNT")
     @ColumnDefault("0")
@@ -61,7 +61,7 @@ public class PostsEntity {
 
     @Column(name = "CREATEDAT")
     @CreatedDate
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(name = "UPDATEDAT")
     private LocalDateTime updatedAt;
