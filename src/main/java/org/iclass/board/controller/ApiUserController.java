@@ -8,6 +8,10 @@ import org.iclass.board.jwt.TokenProvider;
 import org.iclass.board.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,24 +25,31 @@ public class ApiUserController {
 
     private final UserService userService;
     private final TokenProvider tokenProvider;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
-        UserEntity user = userService.login(userDTO.getUserId(), userDTO.getPassword());
+        try {
+            // 1. UsernamePasswordAuthenticationToken 생성
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword());
 
-        if (user != null) {
-            // 로그인 성공 JWT 토큰 생성
-            String token = tokenProvider.generateToken(user.getUserId());
+            // 2. AuthenticationManager를 통해 인증 시도
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-            // 응답 데이터 구성
+            // 3. 인증이 성공하면 JWT 토큰 생성
+            String jwt = tokenProvider.generateToken(authentication);
+
+            // 4. 응답 데이터 구성
             Map<String, Object> response = new HashMap<>();
-            response.put("token", token);
-            response.put("user", user);
+            response.put("token", jwt);
+            response.put("user", authentication.getPrincipal()); // 유저 정보를 담을 수 있음
 
             return ResponseEntity.ok(response);
-        } else {
-            // 로그인 실패
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: 아이디 또는 비밀번호가 잘못되었습니다.");
+
+        } catch (AuthenticationException e) {
+            // 5. 인증 실패 시 예외 처리
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: " + e.getMessage());
         }
     }
 

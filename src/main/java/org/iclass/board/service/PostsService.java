@@ -74,7 +74,9 @@ public class PostsService {
     }
 
     public PostsDTO createPost(PostsDTO postsDTO) {
-        PostsEntity post = postsRepository.save(postsDTO.toEntity());
+        //postsMapper.savePost(postsDTO);
+        PostsEntity post = postsDTO.toEntity();
+        postsRepository.save(post);
         return PostsDTO.of(post);
     }
 }

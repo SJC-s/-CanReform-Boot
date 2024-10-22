@@ -43,17 +43,8 @@ public class TokenProvider {
         this.jwtSecretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10시간 유효
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact();
-    }
-
     // 토큰 생성
-/*    public String generateToken(Authentication authentication) {
+    public String generateToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -68,11 +59,12 @@ public class TokenProvider {
                 .setExpiration(validity)
                 .signWith(jwtSecretKey, SignatureAlgorithm.HS256)
                 .compact();
-    }*/
+    }
 
     // 토큰에서 인증 정보 추출
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
+        log.info("claims : {}", claims);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");

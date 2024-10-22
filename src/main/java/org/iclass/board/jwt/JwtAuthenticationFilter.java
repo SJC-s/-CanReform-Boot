@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.UserAccountDTO;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,11 +18,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.IOException;
 
 @AllArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final TokenProvider tokenProvider;
 
-    public JwtAuthenticationFilter(TokenProvider tokenProvider, AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager,TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
         setAuthenticationManager(authenticationManager);
     }
@@ -32,13 +34,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             // 요청에서 로그인 정보 가져오기
             ObjectMapper om = new ObjectMapper();
-            //MemberLoginRequestDTO loginParam = om.readValue(request.getInputStream(), MemberLoginRequestDTO.class);
-            UserAccountDTO loginParam = om.readValue(request.getInputStream(), UserAccountDTO.class);
+            MemberLoginRequestDTO loginParam = om.readValue(request.getInputStream(), MemberLoginRequestDTO.class);
+            //UserAccountDTO loginParam = om.readValue(request.getInputStream(), UserAccountDTO.class);
 
             // 인증 토큰 생성
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginParam.getUsername(), loginParam.getPassword());
+                    new UsernamePasswordAuthenticationToken(loginParam.getUserId(), loginParam.getPassword());
 
+            log.info("authenticationToken : {}", authenticationToken);
             // 인증
             return getAuthenticationManager().authenticate(authenticationToken);
         } catch (IOException e) {
@@ -50,7 +53,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // 토큰 생성
-        String jwt = tokenProvider.generateToken(authResult.getName());
+        String jwt = tokenProvider.generateToken(authResult);
+        log.info("JWT가 제대로 생성되는지 확인: {}", jwt);  //
         TokenResponseDTO tokenResponse = new TokenResponseDTO(jwt);
 
         // response body에 토큰 DTO 반환

@@ -35,7 +35,7 @@ public class UserEntity {
     private char isActive;
 
     @Column(name = "PASSWORD", nullable = false, length = 255)
-    public String password;
+    private String password;
 
     @Column(name = "USERSROLE", nullable = false)
     private String usersRole;
