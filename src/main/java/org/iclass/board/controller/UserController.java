@@ -1,12 +1,10 @@
 package org.iclass.board.controller;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.UserDTO;
 import org.iclass.board.entity.UserEntity;
 import org.iclass.board.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -45,4 +45,3 @@ public class UserDTO {
                 .build();
     }
 }
-
