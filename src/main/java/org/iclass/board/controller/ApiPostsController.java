@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,17 +65,43 @@ public class ApiPostsController {
 
     // 게시글 작성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createPost(@RequestPart("post") PostsDTO postDTO, @RequestPart("files") List<MultipartFile> files, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+    public ResponseEntity<?> createPost(@RequestPart("post") PostsDTO postDTO, @RequestPart(value =  "files", required = false) List<MultipartFile> files, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         postDTO.setUserId(userDetails.getUsername());  // userId를 DTO에 설정
 
         List<String> savedFilePaths = new ArrayList<>();
-        // 파일 저장 처리
-        for (MultipartFile file : files) {
-            String filePath = "C:/upload/" + file.getOriginalFilename(); // 파일 경로 지정
-            File dest = new File(filePath);
-            file.transferTo(dest);
-            savedFilePaths.add(file.getOriginalFilename()); // 저장된 파일 리스트에 추가
-            log.info("파일 업로드 완료: {}", filePath);
+
+        // 카테고리가 "Inquiry"인 경우 파일 없이도 등록 가능
+        if (!"Inquiry".equals(postDTO.getCategory())) {
+            // 파일이 비어 있을 때 처리
+            if (files == null || files.isEmpty()) {
+                return ResponseEntity.badRequest().body("파일이 없습니다.");
+            }
+
+            // 허용할 확장자 목록
+            List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
+
+            // 파일 저장 처리
+            for (MultipartFile file : files) {
+                String filename = file.getOriginalFilename();
+                if (filename == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("파일 이름을 찾을 수 없습니다.");
+                }
+
+                // 파일 확장자 확인
+                String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+                if (!allowedExtensions.contains(extension)) {
+                    return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                            .body("허용되지 않은 파일 확장자입니다. 허용된 확장자: " + String.join(", ", allowedExtensions));
+                }
+
+                // 파일 저장 경로 지정
+                String filePath = "C:/uploads/" + filename;
+                File dest = new File(filePath);
+                file.transferTo(dest); // 파일 저장
+
+                savedFilePaths.add(filePath);
+                log.info("파일 업로드 완료: {}", filePath);
+            }
         }
 
         // PostsDTO에서 파일 경로를 설정 (추가적인 로직이 필요할 수 있음)
