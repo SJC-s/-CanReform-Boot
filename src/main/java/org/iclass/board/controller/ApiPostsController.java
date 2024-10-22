@@ -19,8 +19,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.nio.file.Path;
@@ -83,26 +85,26 @@ public class ApiPostsController {
     }
 
     @GetMapping("/download/{filename}")
-    public ResponseEntity<?> downloadFile(@PathVariable String filename) {
-        String uploadDir = "C:/upload/";
-        try {
-            // 파일 경로 설정
-            Path filePath = Paths.get(uploadDir).resolve(filename).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
+    public ResponseEntity<?> downloadFile(@PathVariable String filename) throws IOException  {
+        // 파일 경로 설정
+        Path filePath = Paths.get("C:/upload/").resolve(filename).normalize();
+        Resource resource = new UrlResource(filePath.toUri());
 
-            // 파일이 존재하고 읽을 수 있는지 확인
-            if (!resource.exists() || !resource.isReadable()) {
-                throw new RuntimeException("파일을 찾을 수 없거나 읽을 수 없습니다.");
-            }
-
-            // 파일 다운로드를 위한 응답 설정
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-
-        } catch (MalformedURLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        if (!resource.exists()) {
+            throw new FileNotFoundException("파일을 찾을 수 없습니다: " + filename);
         }
+
+        // 파일의 MIME 타입 추정
+        String contentType = Files.probeContentType(filePath);
+        if (contentType == null) {
+            contentType = "application/octet-stream";  // 기본 MIME 타입
+        }
+
+        // Content-Disposition 설정: 다운로드할 때 파일명을 지정
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 
 }
