@@ -19,9 +19,19 @@ public interface PostsRepository extends JpaRepository<PostsEntity, Long> {
     @Query("SELECT p, u.username FROM PostsEntity p JOIN UserEntity u ON p.userId = u.userId ORDER BY p.createdAt DESC")
     List<Object[]> getPostsWithUsers();
 
-
     @Query("SELECT p FROM PostsEntity p WHERE (:category = 'all' OR p.category = :category) AND p.title LIKE %:search% ORDER BY p.createdAt desc")
     Page<PostsEntity> findByCategoryAndTitleContainingOrderByCreatedAtDesc(Pageable pageable, String category, String search);
+
+    @Query("SELECT p FROM PostsEntity p WHERE (:category = 'all' OR p.category = :category) AND p.content LIKE %:search% ORDER BY p.createdAt desc")
+    Page<PostsEntity> findByCategoryAndContentContainingOrderByCreatedAtDesc(Pageable pageable, String category, String search);
+
+    @Query("SELECT p FROM PostsEntity p WHERE (:category = 'all' OR p.category = :category) AND p.userId LIKE %:search% ORDER BY p.createdAt desc")
+    Page<PostsEntity> findByCategoryAndUserIdContainingOrderByCreatedAtDesc(Pageable pageable, String category, String search);
+
+    @Query("SELECT p FROM PostsEntity p WHERE (:category = 'all' OR p.category = :category) " +
+            "AND (p.title LIKE %:search% OR p.userId LIKE %:search% OR p.content LIKE %:search%) ORDER BY p.createdAt desc")
+    Page<PostsEntity> findByCategoryAndTitleOrUserIdOrContentContainingOrderByCreatedAtDesc(Pageable pageable, String category, String search);
+
 
     Optional<PostsEntity> findByPostId(Long postId);
 }

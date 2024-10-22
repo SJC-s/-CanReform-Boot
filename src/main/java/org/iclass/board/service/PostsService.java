@@ -39,8 +39,29 @@ public class PostsService {
         return postsRepository.getPostsWithUsers();
     }
 
-    public Page<PostsDTO> getFilteredPosts(Pageable pageable, String search, String category) {
-        Page<PostsEntity> postsPage = postsRepository.findByCategoryAndTitleContainingOrderByCreatedAtDesc(pageable, category, search);
+    public Page<PostsDTO> getFilteredPosts(Pageable pageable, String search, String category, String searchClass) {
+        Page<PostsEntity> postsPage;
+
+        // 전체 검색 (title, content, userId)
+        if ("all".equals(searchClass)) {
+            postsPage = postsRepository.findByCategoryAndTitleOrUserIdOrContentContainingOrderByCreatedAtDesc(pageable, category, search);
+        }
+        // 제목으로 검색
+        else if ("title".equals(searchClass)) {
+            postsPage = postsRepository.findByCategoryAndTitleContainingOrderByCreatedAtDesc(pageable, category, search);
+        }
+        // 내용으로 검색
+        else if ("content".equals(searchClass)) {
+            postsPage = postsRepository.findByCategoryAndContentContainingOrderByCreatedAtDesc(pageable, category, search);
+        }
+        // 작성자로 검색
+        else if ("userId".equals(searchClass)) {
+            postsPage = postsRepository.findByCategoryAndUserIdContainingOrderByCreatedAtDesc(pageable, category, search);
+        }
+        // 예외 처리: 잘못된 searchClass 값이 들어온 경우
+        else {
+            throw new IllegalArgumentException("Invalid searchClass: " + searchClass);
+        }
 
         return postsPage.map(PostsDTO::of);
     }
@@ -49,6 +70,11 @@ public class PostsService {
         PostsEntity post = postsRepository.findByPostId(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
+        return PostsDTO.of(post);
+    }
+
+    public PostsDTO createPost(PostsDTO postsDTO) {
+        PostsEntity post = postsRepository.save(postsDTO.toEntity());
         return PostsDTO.of(post);
     }
 }
