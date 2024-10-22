@@ -56,7 +56,8 @@ public class PostsEntity {
     private Integer commentCount;
 
     @Column(name = "STATUS", length = 50)
-    private String status = "OPEN";
+    @ColumnDefault("'OPEN'")
+    private String status;
 
     @Column(name = "CREATEDAT")
     @CreatedDate
