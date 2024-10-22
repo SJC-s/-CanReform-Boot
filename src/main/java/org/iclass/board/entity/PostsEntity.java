@@ -34,25 +34,25 @@ public class PostsEntity {
     @Column(name = "CONTENT")
     private String content;
 
-    @Column(name = "ISPRIVATE", nullable = false, length = 1, columnDefinition = "CHAR(1) DEFAULT 'N'")
+    @Column(name = "ISPRIVATE", nullable = false, length = 1)
     private char isPrivate;
 
-    @Column(name = "CATEGORY", nullable = false, length = 50, columnDefinition = "VARCHAR2(50) DEFAULT 'Inquiry'")
+    @Column(name = "CATEGORY", nullable = false, length = 50)
     private String category;
 
     @Column(name = "FILENAMES", length = 255)
     private String filenames;
 
-    @Column(name = "READCOUNT", nullable = false, columnDefinition = "NUMBER(10) DEFAULT 0")
+    @Column(name = "READCOUNT", nullable = false)
     private Integer readCount;
 
-    @Column(name = "COMMENTCOUNT", nullable = false, columnDefinition = "NUMBER(10) DEFAULT 0")
+    @Column(name = "COMMENTCOUNT", nullable = false)
     private Integer commentCount;
 
     @Column(name = "STATUS", nullable = false, length = 50)
     private String status;
 
-    @Column(name = "CREATEDAT", nullable = false, updatable = false)
+    @Column(name = "CREATEDAT")
     private LocalDateTime createdAt;
 
     @Column(name = "UPDATEDAT")

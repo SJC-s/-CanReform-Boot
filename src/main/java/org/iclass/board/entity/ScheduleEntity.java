@@ -34,6 +34,6 @@ public class ScheduleEntity {
     private LocalDateTime eventDate;
 
     @CreatedDate
-    @Column(name = "CREATEDAT", nullable = false, updatable = false)
+    @Column(name = "CREATEDAT")
     private LocalDateTime createdAt = LocalDateTime.now();
 }

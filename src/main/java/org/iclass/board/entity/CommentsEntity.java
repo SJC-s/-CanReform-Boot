@@ -35,6 +35,6 @@ public class CommentsEntity {
     private String content;
 
     @CreatedDate
-    @Column(name = "CREATEDAT", nullable = false, updatable = false)
+    @Column(name = "CREATEDAT")
     private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -35,7 +35,7 @@ public class UsersEntity {
     @Column(name = "PASSWORD", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "USERSROLE", nullable = false, columnDefinition = "VARCHAR2(20) DEFAULT 'MEMBER'")
+    @Column(name = "USERSROLE", nullable = false)
     private String usersRole;
 
     @CreatedDate

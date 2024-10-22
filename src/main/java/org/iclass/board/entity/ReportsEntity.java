@@ -34,6 +34,6 @@ public class ReportsEntity {
     private String reason;
 
     @CreatedDate
-    @Column(name = "CREATEDAT", nullable = false, updatable = false)
+    @Column(name = "CREATEDAT")
     private LocalDateTime createdAt = LocalDateTime.now();
 }

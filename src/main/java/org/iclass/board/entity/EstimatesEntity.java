@@ -40,7 +40,7 @@ public class EstimatesEntity {
     private String status;
 
     @CreatedDate
-    @Column(name = "CREATEDAT", nullable = false, updatable = false)
+    @Column(name = "CREATEDAT")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "UPDATEDAT")
