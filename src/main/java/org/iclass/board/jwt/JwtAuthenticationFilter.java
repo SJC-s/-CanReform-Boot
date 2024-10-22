@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.iclass.board.dto.UserAccountDTO;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,11 +32,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             // 요청에서 로그인 정보 가져오기
             ObjectMapper om = new ObjectMapper();
-            MemberLoginRequestDTO loginParam = om.readValue(request.getInputStream(), MemberLoginRequestDTO.class);
+            //MemberLoginRequestDTO loginParam = om.readValue(request.getInputStream(), MemberLoginRequestDTO.class);
+            UserAccountDTO loginParam = om.readValue(request.getInputStream(), UserAccountDTO.class);
 
             // 인증 토큰 생성
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginParam.getUserId(), loginParam.getPassword());
+                    new UsernamePasswordAuthenticationToken(loginParam.getUsername(), loginParam.getPassword());
 
             // 인증
             return getAuthenticationManager().authenticate(authenticationToken);
