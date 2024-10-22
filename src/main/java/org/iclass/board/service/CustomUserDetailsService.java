@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info(dto.toString());
 
         UserDetails userDetails = UserAccountDTO.builder()
-                .username(dto.getUsername())
+                .username(dto.getUserId())
                 .password(dto.getPassword())
                 .authorities(new SimpleGrantedAuthority(dto.getUsersRole()))
                 .build();

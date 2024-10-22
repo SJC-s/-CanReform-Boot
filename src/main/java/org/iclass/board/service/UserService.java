@@ -51,9 +51,8 @@ public class UserService {
     public UserDTO signup(UserDTO dto) {
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
         dto.setPassword(encodedPassword);
-        userMapper.save(dto);
         UserEntity entity = dto.toEntity();
-        //userRepository.save(entity);
+        userRepository.save(entity);
 
         return UserDTO.of(entity);
     }

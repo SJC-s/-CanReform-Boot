@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,7 +50,10 @@ public class ApiPostsController {
 
     // 게시글 작성
     @PostMapping
-    public ResponseEntity<?> createPost(@RequestBody PostsDTO postDTO) {
+    public ResponseEntity<?> createPost(@RequestBody PostsDTO postDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        // `userId`는 JWT에서 추출된 값
+        log.info("usersdrserser {}", userDetails.getUsername());
+        postDTO.setUserId(userDetails.getUsername());  // userId를 DTO에 설정
         PostsDTO savedPost = postsService.createPost(postDTO);
         return ResponseEntity.ok(savedPost);
     }
