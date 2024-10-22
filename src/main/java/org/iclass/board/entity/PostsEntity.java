@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -35,25 +34,25 @@ public class PostsEntity {
     @Column(name = "CONTENT")
     private String content;
 
-    @Column(name = "ISPRIVATE", nullable = false, length = 1)
+    @Column(name = "ISPRIVATE", nullable = false, length = 1, columnDefinition = "CHAR(1) DEFAULT 'N'")
     private char isPrivate;
 
-    @Column(name = "CATEGORY", nullable = false, length = 50)
+    @Column(name = "CATEGORY", nullable = false, length = 50, columnDefinition = "VARCHAR2(50) DEFAULT 'Inquiry'")
     private String category;
 
     @Column(name = "FILENAMES", length = 255)
     private String filenames;
 
-    @Column(name = "READCOUNT", nullable = false)
+    @Column(name = "READCOUNT", nullable = false, columnDefinition = "NUMBER(10) DEFAULT 0")
     private Integer readCount;
 
-    @Column(name = "COMMENTCOUNT", nullable = false)
+    @Column(name = "COMMENTCOUNT", nullable = false, columnDefinition = "NUMBER(10) DEFAULT 0")
     private Integer commentCount;
 
     @Column(name = "STATUS", nullable = false, length = 50)
     private String status;
 
-    @Column(name = "CREATEDAT")
+    @Column(name = "CREATEDAT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "UPDATEDAT")
@@ -73,8 +72,8 @@ CREATE TABLE POSTS (
     CREATED_AT DATE DEFAULT SYSDATE,
     UPDATED_AT DATE,
 	FILENAMES VARCHAR2(255),
-	 READCOUNT NUMBER(10) DEFAULT 0,
-	 COMMENTCOUNT NUMBER(10) DEFAULT 0,
+	READCOUNT NUMBER(10) DEFAULT 0,
+	COMMENTCOUNT NUMBER(10) DEFAULT 0,
     STATUS VARCHAR2(50) NOT NULL CHECK (STATUS IN ('OPEN', 'CLOSED', 'PENDING')),  -- 게시글 상태
     FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)
 );

@@ -2,8 +2,8 @@ package org.iclass.board.service;
 
 import lombok.RequiredArgsConstructor;
 import org.iclass.board.dao.UserMapper;
-import org.iclass.board.dto.UserDTO;
-import org.iclass.board.entity.UserEntity;
+import org.iclass.board.dto.UsersDTO;
+import org.iclass.board.entity.UsersEntity;
 import org.iclass.board.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,15 +19,15 @@ public class UserService {
     private final UserMapper userMapper;
 
 
-    public void registerUser(UserDTO user) {
+    public void registerUser(UsersDTO user) {
         userMapper.save(user);
     }
 
-    public UserDTO getUserByUsername(String username) {
+    public UsersDTO getUserByUsername(String username) {
         return userMapper.findByUsername(username);
     }
 
-    public UserDTO login(String userId, String password) {
+    public UsersDTO login(String userId, String password) {
         // 파라미터를 Map 으로 전달
         Map<String, Object> params = new HashMap<>();
         params.put("username", userId);
@@ -40,14 +40,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public UserDTO signup(UserDTO dto) {
+    public UsersDTO signup(UsersDTO dto) {
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
         dto.setPassword(encodedPassword);
         userMapper.save(dto);
-        UserEntity entity = dto.toEntity();
+        UsersEntity entity = dto.toEntity();
         //userRepository.save(entity);
 
-        return UserDTO.of(entity);
+        return UsersDTO.of(entity);
     }
 
     public boolean checkUsernameExists(String userId) {

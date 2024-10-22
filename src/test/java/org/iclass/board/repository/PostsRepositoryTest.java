@@ -2,7 +2,6 @@ package org.iclass.board.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.entity.PostsEntity;
-import org.iclass.board.entity.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
