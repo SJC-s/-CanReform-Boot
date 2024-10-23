@@ -70,11 +70,7 @@ public class ApiPostsController {
         List<String> savedFilePaths = new ArrayList<>();
 
         // 카테고리가 "Inquiry"인 경우 파일 없이도 등록 가능
-        if (!"Inquiry".equals(postDTO.getCategory())) {
-            // 파일이 비어 있을 때 처리
-            if (files == null || files.isEmpty()) {
-                return ResponseEntity.badRequest().body("파일이 없습니다.");
-            }
+        if (!files.isEmpty() || !"Inquiry".equals(postDTO.getCategory())) {
 
             // 허용할 확장자 목록
             List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
