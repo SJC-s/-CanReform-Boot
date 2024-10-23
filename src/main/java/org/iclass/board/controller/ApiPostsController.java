@@ -52,7 +52,6 @@ public class ApiPostsController {
         }
         Pageable pageable = PageRequest.of(page - 1, limit);  // 페이지 번호를 0 기반으로 변환
         Page<PostsDTO> dto = postsService.getFilteredPosts(pageable, search, category, searchClass);
-        log.info("dkfjdlfjdlf : {}",dto.toString());
         return ResponseEntity.ok(dto);
     }
 
@@ -95,7 +94,7 @@ public class ApiPostsController {
                 }
 
                 // 파일 저장 경로 지정
-                String filePath = "C:/uploads/" + filename;
+                String filePath = "C:/upload/" + filename;
                 File dest = new File(filePath);
                 file.transferTo(dest); // 파일 저장
 
