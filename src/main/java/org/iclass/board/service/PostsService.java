@@ -75,28 +75,18 @@ public class PostsService {
     }
 
     public PostsDTO getPostDetail(Long postId) {
+        postsRepository.updateReadCountPlus(postId);
         PostsEntity post = postsRepository.findByPostId(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
-
+        log.info("조회수 증가 = {}", post.getReadCount());
         return PostsDTO.of(post);
     }
+
 
     public PostsDTO createPost(PostsDTO postsDTO) {
         PostsEntity post = postsDTO.toEntity();
         postsRepository.save(post);
         return PostsDTO.of(post);
-    }
-
-    public Resource downloadFile(String filename) throws IOException {
-        // 파일 경로 설정
-        Path filePath = Paths.get("C:/upload/").resolve(filename).normalize();
-        Resource resource = new UrlResource(filePath.toUri());
-
-        if (!resource.exists()) {
-            throw new FileNotFoundException("파일을 찾을 수 없습니다: " + filename);
-        }
-
-        return resource;
     }
 
     public PostsDTO updatePost(PostsDTO postsDTO, List<MultipartFile> files) throws IOException {

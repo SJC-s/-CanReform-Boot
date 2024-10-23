@@ -47,16 +47,13 @@ public class PostsEntity {
     @Column(name = "FILENAMES")
     private String filenames;
 
-    @Column(name = "READCOUNT")
-    @ColumnDefault("0")
+    @Column(name = "READCOUNT", columnDefinition = "NUMBER(10) DEFAULT 0")
     private Integer readCount;
 
-    @Column(name = "COMMENTCOUNT")
-    @ColumnDefault("0")
+    @Column(name = "COMMENTCOUNT", columnDefinition = "NUMBER(10) DEFAULT 0")
     private Integer commentCount;
 
-    @Column(name = "STATUS", length = 50)
-    @ColumnDefault("'OPEN'")
+    @Column(name = "STATUS", length = 50, columnDefinition = "VARCHAR2(25) DEFAULT 'OPEN'")
     private String status;
 
     @Column(name = "CREATEDAT")
