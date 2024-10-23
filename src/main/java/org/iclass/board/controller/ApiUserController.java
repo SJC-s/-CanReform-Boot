@@ -2,6 +2,7 @@ package org.iclass.board.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.iclass.board.dto.UserAccountDTO;
 import org.iclass.board.dto.UsersDTO;
 import org.iclass.board.jwt.TokenProvider;
 import org.iclass.board.service.UserService;
@@ -11,6 +12,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,4 +66,5 @@ public class ApiUserController {
         boolean exists = userService.checkUsernameExists(userId);
         return ResponseEntity.ok(exists);
     }
+
 }
