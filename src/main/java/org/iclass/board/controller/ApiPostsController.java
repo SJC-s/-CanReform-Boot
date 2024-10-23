@@ -67,20 +67,29 @@ public class ApiPostsController {
     public ResponseEntity<?> createPost(@RequestPart("post") PostsDTO postsDTO, @RequestPart(value =  "files", required = false) List<MultipartFile> files, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         postsDTO.setUserId(userDetails.getUsername());  // userId를 DTO에 설정
 
-        // 파일 저장 로직을 서비스로 위임
-        List<String> savedFilePaths = postsService.saveFiles(files);
-        postsDTO.setFilenames(String.join(",", savedFilePaths));
+        // 카테고리가 "Inquiry"인 경우 파일 없이도 등록 가능
+        if (!"Inquiry".equals(postsDTO.getCategory()) || files != null) {
+            // 파일 저장 로직을 서비스로 위임
+            List<String> savedFilePaths = postsService.saveFiles(files);
+            postsDTO.setFilenames(String.join(",", savedFilePaths));
+        }
 
-        PostsDTO savedPost = postsService.createPost(postsDTO, files);
+        PostsDTO savedPost = postsService.createPost(postsDTO);
         return ResponseEntity.ok(savedPost);
     }
 
     @GetMapping("/download/{filename}")
     public ResponseEntity<?> downloadFile(@PathVariable String filename) throws IOException {
-        Resource resource = postsService.downloadFile(filename);
+        // 파일 경로 설정
+        Path filePath = Paths.get("C:/upload/").resolve(filename).normalize();
+        Resource resource = new UrlResource(filePath.toUri());
+
+        if (!resource.exists()) {
+            throw new FileNotFoundException("파일을 찾을 수 없습니다: " + filename);
+        }
 
         // 파일의 MIME 타입 추정
-        String contentType = Files.probeContentType(resource.getFile().toPath());
+        String contentType = Files.probeContentType(filePath);
         if (contentType == null) {
             contentType = "application/octet-stream";  // 기본 MIME 타입
         }

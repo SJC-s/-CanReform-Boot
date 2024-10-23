@@ -81,11 +81,7 @@ public class PostsService {
         return PostsDTO.of(post);
     }
 
-    public PostsDTO createPost(PostsDTO postsDTO, List<MultipartFile> files) throws IOException {
-        // 파일 저장 처리 로직을 서비스 클래스에서 처리
-        List<String> savedFilePaths = saveFiles(files);
-        postsDTO.setFilenames(String.join(",", savedFilePaths));
-
+    public PostsDTO createPost(PostsDTO postsDTO) {
         PostsEntity post = postsDTO.toEntity();
         postsRepository.save(post);
         return PostsDTO.of(post);
@@ -145,30 +141,28 @@ public class PostsService {
 
     public List<String> saveFiles(List<MultipartFile> files) throws IOException {
         List<String> savedFilePaths = new ArrayList<>();
-        if (files != null && !files.isEmpty()) {
-            // 허용할 확장자 목록
-            List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
+        // 허용할 확장자 목록
+        List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
 
-            for (MultipartFile file : files) {
-                String filename = file.getOriginalFilename();
-                if (filename == null) {
-                    throw new IllegalArgumentException("파일 이름을 찾을 수 없습니다.");
-                }
-
-                // 파일 확장자 확인
-                String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-                if (!allowedExtensions.contains(extension)) {
-                    throw new IllegalArgumentException("허용되지 않은 파일 확장자입니다. 허용된 확장자: " + String.join(", ", allowedExtensions));
-                }
-
-                // 파일 저장 경로 지정
-                String filePath = "C:/upload/" + filename;
-                File dest = new File(filePath);
-                file.transferTo(dest); // 파일 저장
-
-                savedFilePaths.add(filePath);
-                log.info("파일 업로드 완료: {}", filePath);
+        for (MultipartFile file : files) {
+            String filename = file.getOriginalFilename();
+            if (filename == null) {
+                throw new IllegalArgumentException("파일 이름을 찾을 수 없습니다.");
             }
+
+            // 파일 확장자 확인
+            String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+            if (!allowedExtensions.contains(extension)) {
+                throw new IllegalArgumentException("허용되지 않은 파일 확장자입니다. 허용된 확장자: " + String.join(", ", allowedExtensions));
+            }
+
+            // 파일 저장 경로 지정
+            String filePath = "C:/upload/" + filename;
+            File dest = new File(filePath);
+            file.transferTo(dest); // 파일 저장
+
+            savedFilePaths.add(filename);
+            log.info("파일 업로드 완료: {}", filename);
         }
         return savedFilePaths;
     }
