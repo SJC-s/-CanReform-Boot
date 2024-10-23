@@ -64,60 +64,23 @@ public class ApiPostsController {
 
     // 게시글 작성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createPost(@RequestPart("post") PostsDTO postDTO, @RequestPart(value =  "files", required = false) List<MultipartFile> files, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        postDTO.setUserId(userDetails.getUsername());  // userId를 DTO에 설정
+    public ResponseEntity<?> createPost(@RequestPart("post") PostsDTO postsDTO, @RequestPart(value =  "files", required = false) List<MultipartFile> files, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        postsDTO.setUserId(userDetails.getUsername());  // userId를 DTO에 설정
 
-        List<String> savedFilePaths = new ArrayList<>();
+        // 파일 저장 로직을 서비스로 위임
+        List<String> savedFilePaths = postsService.saveFiles(files);
+        postsDTO.setFilenames(String.join(",", savedFilePaths));
 
-        // 카테고리가 "Inquiry"인 경우 파일 없이도 등록 가능
-        if (!files.isEmpty() || !"Inquiry".equals(postDTO.getCategory())) {
-
-            // 허용할 확장자 목록
-            List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
-
-            // 파일 저장 처리
-            for (MultipartFile file : files) {
-                String filename = file.getOriginalFilename();
-                if (filename == null) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("파일 이름을 찾을 수 없습니다.");
-                }
-
-                // 파일 확장자 확인
-                String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-                if (!allowedExtensions.contains(extension)) {
-                    return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-                            .body("허용되지 않은 파일 확장자입니다. 허용된 확장자: " + String.join(", ", allowedExtensions));
-                }
-
-                // 파일 저장 경로 지정
-                String filePath = "C:/upload/" + filename;
-                File dest = new File(filePath);
-                file.transferTo(dest); // 파일 저장
-
-                savedFilePaths.add(filePath);
-                log.info("파일 업로드 완료: {}", filePath);
-            }
-        }
-
-        // PostsDTO에서 파일 경로를 설정 (추가적인 로직이 필요할 수 있음)
-        postDTO.setFilenames(String.join(",", savedFilePaths));
-
-        PostsDTO savedPost = postsService.createPost(postDTO);
+        PostsDTO savedPost = postsService.createPost(postsDTO, files);
         return ResponseEntity.ok(savedPost);
     }
 
     @GetMapping("/download/{filename}")
-    public ResponseEntity<?> downloadFile(@PathVariable String filename) throws IOException  {
-        // 파일 경로 설정
-        Path filePath = Paths.get("C:/upload/").resolve(filename).normalize();
-        Resource resource = new UrlResource(filePath.toUri());
-
-        if (!resource.exists()) {
-            throw new FileNotFoundException("파일을 찾을 수 없습니다: " + filename);
-        }
+    public ResponseEntity<?> downloadFile(@PathVariable String filename) throws IOException {
+        Resource resource = postsService.downloadFile(filename);
 
         // 파일의 MIME 타입 추정
-        String contentType = Files.probeContentType(filePath);
+        String contentType = Files.probeContentType(resource.getFile().toPath());
         if (contentType == null) {
             contentType = "application/octet-stream";  // 기본 MIME 타입
         }
@@ -127,6 +90,34 @@ public class ApiPostsController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    // 게시글 수정
+    @PutMapping("/{postId}")
+    public ResponseEntity<?> updatePost(@PathVariable Long postId, @RequestPart("post") PostsDTO postsDTO, @RequestPart(value = "files", required = false) List<MultipartFile> files, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        // 로그인된 사용자와 게시글 작성자 확인
+        PostsDTO existingPost = postsService.getPostDetail(postId);
+        if (!existingPost.getUserId().equals(userDetails.getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("게시글을 수정할 권한이 없습니다.");
+        }
+
+        // 수정 처리, 파일도 포함해서 업데이트
+        PostsDTO updatedPost = postsService.updatePost(postsDTO, files);
+        return ResponseEntity.ok(updatedPost);
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails) {
+        // 로그인된 사용자와 게시글 작성자 확인
+        PostsDTO existingPost = postsService.getPostDetail(postId);
+        if (!existingPost.getUserId().equals(userDetails.getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("게시글을 삭제할 권한이 없습니다.");
+        }
+
+        // 삭제 처리
+        postsService.deletePost(postId);
+        return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }
 
 }
