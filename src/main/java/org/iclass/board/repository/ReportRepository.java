@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 
 public interface ReportRepository extends JpaRepository<ReportsEntity, Long> {
-
-
+    Integer countByPostId(Long postId);
 }

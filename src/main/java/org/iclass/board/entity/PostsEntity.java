@@ -38,10 +38,10 @@ public class PostsEntity {
     @Column(name = "CONTENT")
     private String content;
 
-    @Column(name = "ISPRIVATE", nullable = false, length = 1, columnDefinition = "DEFAULT 'N' CHECK (isPrivate IN ('Y', 'N'))")
+    @Column(name = "ISPRIVATE", nullable = false, length = 1, columnDefinition = "VARCHAR2(1) DEFAULT 'N' CHECK (isPrivate IN ('Y', 'N'))")
     private char isPrivate;
 
-    @Column(name = "CATEGORY", nullable = false, length = 50, columnDefinition = "DEFAULT 'Inquiry' CHECK (category IN ('Inquiry', 'request'))")
+    @Column(name = "CATEGORY", nullable = false, length = 50, columnDefinition = "VARCHAR2(50) DEFAULT 'Inquiry' CHECK (category IN ('Inquiry', 'request'))")
     private String category;
 
     @Column(name = "FILENAMES")

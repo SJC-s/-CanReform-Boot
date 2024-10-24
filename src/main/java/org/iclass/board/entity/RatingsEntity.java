@@ -30,7 +30,7 @@ public class RatingsEntity {
     @Column(name = "USERID", nullable = false)
     private String userId;
 
-    @Column(name = "RATING", nullable = false, columnDefinition = "CHECK (rating BETWEEN 1 AND 5)")
+    @Column(name = "RATING", nullable = false, columnDefinition = "Number(1) CHECK (rating BETWEEN 1 AND 5)")
     private Integer rating; // 1-5
 
     @Lob
