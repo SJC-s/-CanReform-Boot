@@ -18,6 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -89,7 +92,7 @@ public class PostsService {
         return PostsDTO.of(post);
     }
 
-    public PostsDTO updatePost(PostsDTO postsDTO, List<MultipartFile> files) throws IOException {
+    public PostsDTO updatePost(PostsDTO postsDTO, List<MultipartFile> files, List<String> existingFiles) throws IOException {
         PostsEntity existingPost = postsRepository.findByPostId(postsDTO.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
@@ -100,17 +103,23 @@ public class PostsService {
         existingPost.setStatus(postsDTO.getStatus());
         existingPost.setIsPrivate(postsDTO.getIsPrivate());
 
-        // 파일 저장 처리 로직을 서비스 클래스에서 처리
-        List<String> savedFilePaths = saveFiles(files);
+        // 기존 파일 처리
+        List<String> currentFiles = existingPost.getFilenames() != null ? Arrays.asList(existingPost.getFilenames().split(",")) : new ArrayList<>();
+        List<String> updatedFiles = existingFiles != null ? new ArrayList<>(existingFiles) : new ArrayList<>();
 
-        // 기존 파일 경로에 새 파일 경로 추가
-        if (!savedFilePaths.isEmpty()) {
-            String existingFiles = existingPost.getFilenames();
-            String updatedFiles = (existingFiles == null || existingFiles.isEmpty()) ?
-                    String.join(",", savedFilePaths) : existingFiles + "," + String.join(",", savedFilePaths);
-            existingPost.setFilenames(updatedFiles);
+        // 기존 파일 중 제거된 파일 삭제 처리
+        currentFiles.stream()
+                .filter(file -> !updatedFiles.contains(file))
+                .forEach(this::deleteFile); // 파일 삭제 로직 호출
+
+        // 새로운 파일 저장
+        if (files != null && !files.isEmpty()) {
+            List<String> savedFilePaths = saveFiles(files);
+            updatedFiles.addAll(savedFilePaths);
         }
 
+        // 업데이트된 파일명 리스트를 저장
+        existingPost.setFilenames(String.join(",", updatedFiles));
         postsRepository.save(existingPost);
         return PostsDTO.of(existingPost);
     }
@@ -146,16 +155,37 @@ public class PostsService {
                 throw new IllegalArgumentException("허용되지 않은 파일 확장자입니다. 허용된 확장자: " + String.join(", ", allowedExtensions));
             }
 
+            // 파일명 인코딩(띄어쓰기 정규화)
+            String encodedFilename = URLEncoder.encode(filename.replaceAll("[\\s+]", "_"), StandardCharsets.UTF_8);
+
             // 파일 저장 경로 지정
-            String filePath = "C:/upload/" + filename;
+            String filePath = "C:/upload/" + encodedFilename;
             File dest = new File(filePath);
             file.transferTo(dest); // 파일 저장
 
-            savedFilePaths.add(filename);
-            log.info("파일 업로드 완료: {}", filename);
+            savedFilePaths.add(encodedFilename);
+            log.info("파일 업로드 완료: {}", encodedFilename);
         }
         return savedFilePaths;
     }
+
+    public void deleteFile(String filename) {
+        try {
+            String decodedFilename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+            String filePath = "C:/upload/" + decodedFilename;
+            File file = new File(filePath);
+            if (file.exists()) {
+                if (file.delete()) {
+                    log.info("파일 삭제 완료: {}", decodedFilename);
+                } else {
+                    log.warn("파일 삭제 실패: {}", decodedFilename);
+                }
+            }
+        } catch (Exception e) {
+            log.error("파일 삭제 중 오류 발생: {}", filename, e);
+        }
+    }
+
 }
 
 
