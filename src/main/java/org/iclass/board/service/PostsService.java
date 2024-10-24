@@ -186,6 +186,17 @@ public class PostsService {
         }
     }
 
+    public void editPost(PostsEntity entity) {
+        entity.setTitle(entity.getTitle());
+        entity.setContent(entity.getContent());
+        entity.setCategory(entity.getCategory());
+        entity.setStatus(entity.getStatus());
+        entity.setIsPrivate(entity.getIsPrivate());
+        entity.setReportCount(entity.getReportCount());
+        entity.setUpdatedAt(entity.getUpdatedAt());
+        entity.setFilenames(entity.getFilenames());
+        postsRepository.save(entity);
+    }
 }
 
 
