@@ -38,7 +38,6 @@ public class ApiPostsController {
     private final PostsService postsService;
 
     /* JPA 구간 */
-    // user_id -> username 포함하기 위한 데이터
     @GetMapping
     public ResponseEntity<?> getPostsWithUsers(
         @RequestParam(defaultValue = "1") int page,  // 페이지 번호 (기본값 1)
