@@ -27,6 +27,7 @@ public class PostsDTO {
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Integer reportCount;
 
     // 업로드 파일을 저장하기 위한 객체
     private MultipartFile file;
@@ -48,6 +49,7 @@ public class PostsDTO {
                 .status(entity.getStatus())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
+                .reportCount(entity.getReportCount())
                 .build();
     }
 
@@ -64,6 +66,7 @@ public class PostsDTO {
                 .commentCount(commentCount)
                 .status(status)
                 .updatedAt(updatedAt)
+                .reportCount(reportCount)
                 .build();
     }
 
