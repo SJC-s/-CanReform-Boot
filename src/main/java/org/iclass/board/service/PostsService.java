@@ -156,7 +156,7 @@ public class PostsService {
             }
 
             // 파일명 인코딩(띄어쓰기 정규화)
-            String encodedFilename = URLEncoder.encode(filename.replaceAll("[\\s+]", "_"), StandardCharsets.UTF_8);
+            String encodedFilename = URLEncoder.encode(filename.replaceAll("[%\\s+]", "_"), StandardCharsets.UTF_8);
 
             // 파일 저장 경로 지정
             String filePath = "C:/upload/" + encodedFilename;
