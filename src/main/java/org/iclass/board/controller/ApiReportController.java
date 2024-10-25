@@ -6,7 +6,6 @@ import org.apache.ibatis.javassist.NotFoundException;
 import org.iclass.board.dto.PostsDTO;
 import org.iclass.board.dto.ReportsDTO;
 import org.iclass.board.entity.PostsEntity;
-import org.iclass.board.entity.ReportsEntity;
 import org.iclass.board.service.PostsService;
 import org.iclass.board.service.ReportService;
 import org.springframework.http.ResponseEntity;
