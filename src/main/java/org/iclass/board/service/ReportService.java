@@ -32,6 +32,7 @@ public class ReportService {
 
     public ReportsDTO saveReport(ReportsDTO dto) {
         ReportsEntity entity = dto.toEntity();
+        reportRepository.updateReportsCountPlus(entity.getPostId());
         reportRepository.save(entity);
         return ReportsDTO.of(entity);
     }

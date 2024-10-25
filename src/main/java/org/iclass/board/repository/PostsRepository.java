@@ -15,6 +15,14 @@ import java.util.Optional;
 @Repository
 public interface PostsRepository extends JpaRepository<PostsEntity, Long> {
 
+    @Query(value = "SELECT p.*, r.avg_rating " +
+            "FROM posts p " +
+            "LEFT JOIN (SELECT postId, AVG(r.rating) as avg_rating FROM ratings r GROUP BY postId) r " +
+            "ON p.postId = r.postId " +
+            "ORDER BY r.avg_rating DESC, p.createdAt DESC",
+            nativeQuery = true)
+    Page<PostsEntity> getBoardToMain(Pageable pageable);
+
 
     // Post 와 User 를 조인해서 작성자 정보를 포함한 게시글 목록 가져오기
     @Query("SELECT p, u.username FROM PostsEntity p JOIN UsersEntity u ON p.userId = u.userId ORDER BY p.createdAt DESC")

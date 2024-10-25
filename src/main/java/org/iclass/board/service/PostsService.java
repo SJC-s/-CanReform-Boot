@@ -49,6 +49,11 @@ public class PostsService {
     /* JPA 구간 */
     private final PostsRepository postsRepository;
 
+    public Page<PostsDTO> getBoardToMain(Pageable pageable) {
+        Page<PostsEntity> mainPage = postsRepository.getBoardToMain(pageable);
+        return mainPage.map(PostsDTO::of);
+    }
+
     public List<Object[]> list() {
         return postsRepository.getPostsWithUsers();
     }
@@ -211,6 +216,7 @@ public class PostsService {
         entity.setCreatedAt(originEntity.getCreatedAt());
         postsRepository.save(entity);
     }
+
 }
 
 
