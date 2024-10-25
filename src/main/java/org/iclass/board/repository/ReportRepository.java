@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 
@@ -22,4 +23,5 @@ public interface ReportRepository extends JpaRepository<ReportsEntity, Long> {
     @Query("SELECT p FROM PostsEntity p WHERE p.reportCount > :reportCount ORDER BY p.reportCount DESC")
     List<PostsEntity> findPostsByReportCountGreaterThan(@Param("reportCount") int reportCount);
 
+    List<ReportsEntity> findByPostId(long postId);
 }
