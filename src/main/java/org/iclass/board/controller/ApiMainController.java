@@ -2,6 +2,7 @@ package org.iclass.board.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.iclass.board.dto.MainPageWithRatingsDTO;
 import org.iclass.board.dto.PostsDTO;
 import org.iclass.board.service.PostsService;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ public class ApiMainController {
 
     @GetMapping
     public ResponseEntity<?> getBoards() {
-        List<PostsDTO> boardPage = postsService.getBoardToMain();
+        MainPageWithRatingsDTO boardPage = postsService.getBoardToMain();
         return ResponseEntity.ok(boardPage);
     }
 

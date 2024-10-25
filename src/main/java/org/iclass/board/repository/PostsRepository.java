@@ -17,10 +17,10 @@ public interface PostsRepository extends JpaRepository<PostsEntity, Long> {
 
     @Query(value = "SELECT p.* " +
             "FROM posts p " +
-            "LEFT JOIN (SELECT postId, AVG(rating) as avg_rating FROM ratings GROUP BY postId) r " +
+            "LEFT JOIN (SELECT postId, AVG(rating) as avgRating FROM ratings GROUP BY postId) r " +
             "ON p.postId = r.postId " +
             "WHERE p.ISPRIVATE = 'Y' AND p.CATEGORY = 'request' " +
-            "ORDER BY r.avg_rating DESC, p.createdAt DESC",
+            "ORDER BY r.avgRating DESC, p.createdAt DESC",
             nativeQuery = true)
     List<PostsEntity> getBoardToMain();
 
