@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -20,16 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiMainController {
     private final PostsService postsService;
 
-    /* JPA 구간 */
     @GetMapping
-    public ResponseEntity<?> getBoards(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<PostsDTO> boardPage = postsService.getBoardToMain(pageable);
-        log.info("::::::::::BoardPage : {}",boardPage.get().toString());
-
+    public ResponseEntity<?> getBoards() {
+        List<PostsDTO> boardPage = postsService.getBoardToMain();
         return ResponseEntity.ok(boardPage);
     }
 

@@ -49,9 +49,9 @@ public class PostsService {
     /* JPA 구간 */
     private final PostsRepository postsRepository;
 
-    public Page<PostsDTO> getBoardToMain(Pageable pageable) {
-        Page<PostsEntity> mainPage = postsRepository.getBoardToMain(pageable);
-        return mainPage.map(PostsDTO::of);
+    public List<PostsDTO> getBoardToMain() {
+        List<PostsEntity> mainPage = postsRepository.getBoardToMain();
+        return mainPage.stream().map(PostsDTO::of).collect(Collectors.toList());
     }
 
     public List<Object[]> list() {
@@ -164,7 +164,7 @@ public class PostsService {
             }
 
             // 파일명 인코딩(띄어쓰기 정규화)
-            String encodedFilename = URLEncoder.encode(filename.replaceAll("[%\\s+]", "_"), StandardCharsets.UTF_8);
+            String encodedFilename = URLEncoder.encode(filename.replaceAll("[,%\\s+]", "_"), StandardCharsets.UTF_8);
 
             // 파일 저장 경로 지정
             String filePath = "C:/upload/" + encodedFilename;
