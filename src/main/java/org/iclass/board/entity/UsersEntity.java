@@ -35,11 +35,10 @@ public class UsersEntity {
     @Column(name = "PASSWORD", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "USERSROLE", nullable = false)
+    @Column(name = "USERSROLE", nullable = false, columnDefinition = "VARCHAR2(20) DEFAULT 'MEMBER' CHECK (USERSROLE IN ('MEMBER', 'ADMIN'))")
     private String usersRole;
 
     @CreatedDate
     @Column(name = "CREATEDAT")
-    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -38,10 +38,10 @@ public class PostsEntity {
     @Column(name = "CONTENT")
     private String content;
 
-    @Column(name = "ISPRIVATE", nullable = false, length = 1)
+    @Column(name = "ISPRIVATE", nullable = false, length = 1, columnDefinition = "VARCHAR2(1) DEFAULT 'N' CHECK (isPrivate IN ('Y', 'N'))")
     private char isPrivate;
 
-    @Column(name = "CATEGORY", nullable = false, length = 50)
+    @Column(name = "CATEGORY", nullable = false, length = 50, columnDefinition = "VARCHAR2(50) DEFAULT 'Inquiry' CHECK (category IN ('Inquiry', 'request'))")
     private String category;
 
     @Column(name = "FILENAMES")
@@ -53,7 +53,7 @@ public class PostsEntity {
     @Column(name = "COMMENTCOUNT", columnDefinition = "NUMBER(10) DEFAULT 0")
     private Integer commentCount;
 
-    @Column(name = "STATUS", length = 50, columnDefinition = "VARCHAR2(25) DEFAULT 'OPEN'")
+    @Column(name = "STATUS", length = 50, columnDefinition = "VARCHAR2(25) DEFAULT 'OPEN' CHECK (status IN ('OPEN', 'CLOSED', 'PENDING'))")
     private String status;
 
     @Column(name = "CREATEDAT")
@@ -63,7 +63,8 @@ public class PostsEntity {
     @Column(name = "UPDATEDAT")
     private LocalDateTime updatedAt;
 
-
+    @Column(name = "REPORTECOUNT", columnDefinition = "NUMBER(10) DEFAULT 0")
+    private Integer reportCount = 0;
 }
 
 /*

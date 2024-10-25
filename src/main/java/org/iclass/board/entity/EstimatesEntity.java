@@ -36,7 +36,7 @@ public class EstimatesEntity {
     @Column(name = "FINALCOST")
     private Integer finalCost;
 
-    @Column(name = "STATUS", nullable = false)
+    @Column(name = "STATUS", nullable = false, columnDefinition = "VARCHAR2(20) CHECK (status IN ('PENDING', 'APPROVED', 'COMPLETED', 'REJECTED'))")
     private String status;
 
     @CreatedDate

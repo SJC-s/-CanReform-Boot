@@ -30,8 +30,8 @@ public class RatingsEntity {
     @Column(name = "USERID", nullable = false)
     private String userId;
 
-    @Column(name = "RATING", nullable = false)
-    private Integer rating; // 1-5
+    @Column(name = "RATING", nullable = false, columnDefinition = "Number(2) CHECK (rating BETWEEN 10 AND 50)")
+    private Integer rating; // 1-5 환산
 
     @Lob
     @Column(name = "REVIEW")
