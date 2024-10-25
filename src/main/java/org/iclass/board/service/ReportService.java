@@ -12,7 +12,9 @@ import org.iclass.board.repository.ReportRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,5 +37,9 @@ public class ReportService {
         reportRepository.updateReportsCountPlus(entity.getPostId());
         reportRepository.save(entity);
         return ReportsDTO.of(entity);
+    }
+
+    public List<PostsEntity> getReportList(Integer reportCount) {
+        return reportRepository.findPostsByReportCountGreaterThan(0);
     }
 }

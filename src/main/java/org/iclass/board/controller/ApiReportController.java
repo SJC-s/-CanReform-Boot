@@ -5,10 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.iclass.board.dto.PostsDTO;
 import org.iclass.board.dto.ReportsDTO;
+import org.iclass.board.entity.PostsEntity;
 import org.iclass.board.service.PostsService;
 import org.iclass.board.service.ReportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/report")
@@ -19,6 +22,14 @@ public class ApiReportController {
 
     private final ReportService reportService;
     private final PostsService postsService;
+
+    @GetMapping(produces = "application/json")  // JSON 형식으로 응답
+    public ResponseEntity<?> getPostsWithUsers(
+            @RequestParam(defaultValue = "0") int reportCount
+    ) {
+        List<PostsEntity> entity = reportService.getReportList(reportCount);
+        return ResponseEntity.ok(entity);
+    }
 
     @GetMapping("/{postId}")
     public ResponseEntity<?> getReportCount(@PathVariable Long postId) {
