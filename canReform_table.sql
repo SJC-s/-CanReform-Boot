@@ -50,7 +50,7 @@ CREATE TABLE ratings (
     ratingId NUMBER(10) PRIMARY KEY,
     postId NUMBER(10) NOT NULL,
     userId VARCHAR2(50) NOT NULL,
-    rating NUMBER(2) CHECK (rating BETWEEN 1 AND 5),  -- 별점 1-5
+    rating NUMBER(2) CHECK (rating BETWEEN 10 AND 50),  -- 별점 1-5
     review CLOB,
     createdAt DATE DEFAULT SYSDATE,
     CONSTRAINT ratingsPostIdFk FOREIGN KEY (postId) REFERENCES posts(postId),
