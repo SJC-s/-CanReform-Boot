@@ -41,7 +41,7 @@ public class ApiPostsController {
 
     /* JPA 구간 */
     @GetMapping
-    public ResponseEntity<?> getPostsWithUsers(
+    public ResponseEntity<?> getPostsSearch(
         @RequestParam(defaultValue = "1") int page,  // 페이지 번호 (기본값 1)
         @RequestParam(defaultValue = "5") int limit, // 페이지 당 게시글 수 (기본값 5)
         @RequestParam(defaultValue = "") String search,  // 검색어 (기본값 "")

@@ -4,9 +4,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dao.PostsMapper;
+import org.iclass.board.dto.AvgRatingDTO;
+import org.iclass.board.dto.MainPageWithRatingsDTO;
 import org.iclass.board.dto.PostsDTO;
 import org.iclass.board.entity.PostsEntity;
+import org.iclass.board.entity.RatingsEntity;
 import org.iclass.board.repository.PostsRepository;
+import org.iclass.board.repository.RatingsRepository;
 import org.iclass.board.repository.ReportRepository;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -40,6 +44,7 @@ public class PostsService {
     /* myBatis 구간 */
     private final PostsMapper postsMapper;
     private final ReportRepository reportRepository;
+    private final RatingsRepository ratingsRepository;
 
     public void savePost(PostsDTO post) {
         postsMapper.savePost(post);
@@ -49,9 +54,21 @@ public class PostsService {
     /* JPA 구간 */
     private final PostsRepository postsRepository;
 
-    public Page<PostsDTO> getBoardToMain(Pageable pageable) {
-        Page<PostsEntity> mainPage = postsRepository.getBoardToMain(pageable);
-        return mainPage.map(PostsDTO::of);
+    public MainPageWithRatingsDTO getBoardToMain() {
+        List<PostsEntity> mainPage = postsRepository.getBoardToMain();
+        List<Object[]> avgRatingData = ratingsRepository.getAvgRating();
+
+        List<AvgRatingDTO> avgRatings = avgRatingData.stream()
+                .map(data -> new AvgRatingDTO((Long) data[0], (Double) data[1]))
+                .collect(Collectors.toList());
+
+        List<PostsDTO> postsDTOs = mainPage.stream().map(PostsDTO::of).collect(Collectors.toList());
+
+        MainPageWithRatingsDTO result = new MainPageWithRatingsDTO();
+        result.setMainPage(postsDTOs);
+        result.setAvgRatings(avgRatings);
+
+        return result;
     }
 
     public List<Object[]> list() {
@@ -164,7 +181,7 @@ public class PostsService {
             }
 
             // 파일명 인코딩(띄어쓰기 정규화)
-            String encodedFilename = URLEncoder.encode(filename.replaceAll("[%\\s+]", "_"), StandardCharsets.UTF_8);
+            String encodedFilename = URLEncoder.encode(filename.replaceAll("[,%\\s+]", "_"), StandardCharsets.UTF_8);
 
             // 파일 저장 경로 지정
             String filePath = "C:/upload/" + encodedFilename;
