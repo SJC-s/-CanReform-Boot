@@ -45,4 +45,10 @@ public class ApiUserController {
         return ResponseEntity.ok(exists);
     }
 
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@RequestParam String email) {
+        boolean exists = userService.existsByEmail(email);
+        return ResponseEntity.ok(exists);
+    }
+
 }
