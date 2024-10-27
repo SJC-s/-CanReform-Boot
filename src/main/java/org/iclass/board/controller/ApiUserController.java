@@ -25,33 +25,11 @@ import java.util.Map;
 public class ApiUserController {
 
     private final UserService userService;
-    private final TokenProvider tokenProvider;
-    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UsersDTO usersDTO) {
-        try {
-            // 1. UsernamePasswordAuthenticationToken 생성
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(usersDTO.getUsername(), usersDTO.getPassword());
-
-            // 2. AuthenticationManager를 통해 인증 시도
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
-            // 3. 인증이 성공하면 JWT 토큰 생성
-            String jwt = tokenProvider.generateToken(authentication);
-
-            // 4. 응답 데이터 구성
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", jwt);
-            response.put("user", authentication.getPrincipal()); // 유저 정보를 담을 수 있음
-
-            return ResponseEntity.ok(response);
-
-        } catch (AuthenticationException e) {
-            // 5. 인증 실패 시 예외 처리
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: " + e.getMessage());
-        }
+    public ResponseEntity<?> login(@RequestBody UsersDTO dto) {
+        Map<String, Object> response = userService.login(dto);
+        return ResponseEntity.ok(response);
     }
 
 

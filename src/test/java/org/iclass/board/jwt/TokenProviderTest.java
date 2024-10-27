@@ -20,7 +20,6 @@ import java.util.Base64;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-@TestPropertySource(properties = {"jwt.secretKey=XFMSVfXp5W8FSNjCnWFKJMChzfJxlCCJ55pZt9JaWZs="})
 class TokenProviderTest {
 
     @Autowired

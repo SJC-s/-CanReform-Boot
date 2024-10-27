@@ -5,10 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dao.UserMapper;
 import org.iclass.board.dto.UsersDTO;
 import org.iclass.board.entity.UsersEntity;
+import org.iclass.board.jwt.TokenProvider;
 import org.iclass.board.repository.UserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,16 +34,34 @@ public class UserService {
     }
 
 
-    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
+    private final AuthenticationManager authenticationManager;
 
-    public UsersEntity login(String userId, String password) {
+    public Map<String, Object> login(UsersDTO dto) {
+
+        // 1. UsernamePasswordAuthenticationToken 생성
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(dto.getUserId(), dto.getPassword());
+
+        // 2. AuthenticationManager를 통해 인증 시도
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+        // 3. 인증이 성공하면 JWT 토큰 생성
+        String jwt = tokenProvider.generateToken(authentication);
+
+        // 4. 응답 데이터 구성
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", jwt);
+        response.put("user", authentication.getPrincipal()); // 유저 정보를 담을 수 있음
+
         // 아이디를 기반으로 사용자 찾기
-        UsersEntity user = userRepository.findByUserId(userId);
+        UsersEntity user = userRepository.findByUserId(dto.getUserId());
 
         // 사용자가 존재하고, 비밀번호가 일치하면 로그인 성공
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return user;
+        if (user != null && passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            return response;
         }
 
         // 로그인 실패 시 null 반환
