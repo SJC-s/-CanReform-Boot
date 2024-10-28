@@ -23,4 +23,5 @@ public interface ReportRepository extends JpaRepository<ReportsEntity, Long> {
     List<PostsEntity> findPostsByReportCountGreaterThan(@Param("reportCount") int reportCount);
 
     List<ReportsEntity> findByPostId(long postId);
+
 }

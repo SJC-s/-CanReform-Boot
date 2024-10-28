@@ -36,4 +36,5 @@ public class ReportsEntity {
     @CreatedDate
     @Column(name = "CREATEDAT")
     private LocalDateTime createdAt = LocalDateTime.now();
+
 }
