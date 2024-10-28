@@ -63,7 +63,7 @@ public class PostsEntity {
     @Column(name = "UPDATEDAT")
     private LocalDateTime updatedAt;
 
-    @Column(name = "REPORTECOUNT", columnDefinition = "NUMBER(10) DEFAULT 0")
+    @Column(name = "REPORTCOUNT", columnDefinition = "NUMBER(10) DEFAULT 0")
     private Integer reportCount = 0;
 
 
