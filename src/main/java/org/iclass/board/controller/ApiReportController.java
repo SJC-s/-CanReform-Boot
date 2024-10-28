@@ -12,7 +12,6 @@ import org.iclass.board.repository.PostsRepository;
 import org.iclass.board.repository.ReportRepository;
 import org.iclass.board.service.PostsService;
 import org.iclass.board.service.ReportService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -82,5 +80,11 @@ public class ApiReportController {
         // 신고 내용을 등록
         reportService.saveReport(dto);
         return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deleteReport(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails) throws NotFoundException {
+        reportService.deleteReports(postId);
+        return ResponseEntity.ok().build();
     }
 }
