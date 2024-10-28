@@ -3,36 +3,27 @@ package org.iclass.board.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.iclass.board.dao.PostsMapper;
 import org.iclass.board.dto.AvgRatingDTO;
 import org.iclass.board.dto.MainPageWithRatingsDTO;
 import org.iclass.board.dto.PostsDTO;
 import org.iclass.board.entity.PostsEntity;
-import org.iclass.board.entity.RatingsEntity;
 import org.iclass.board.repository.PostsRepository;
 import org.iclass.board.repository.RatingsRepository;
 import org.iclass.board.repository.ReportRepository;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,14 +32,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostsService {
 
-    /* myBatis 구간 */
-    private final PostsMapper postsMapper;
     private final ReportRepository reportRepository;
     private final RatingsRepository ratingsRepository;
-
-    public void savePost(PostsDTO post) {
-        postsMapper.savePost(post);
-    }
 
 
     /* JPA 구간 */

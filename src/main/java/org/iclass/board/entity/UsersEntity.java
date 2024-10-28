@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Entity
+@CrossOrigin(origins = "http://localhost:5173")  // 프론트엔드 주소로 변경
 @Table(name = "USERS") // USER 테이블과 매핑
 public class UsersEntity {
 
@@ -41,4 +43,10 @@ public class UsersEntity {
     @CreatedDate
     @Column(name = "CREATEDAT")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column()
+    private String resetPasswordToken;
+
+    @Column()
+    private LocalDateTime resetPasswordExpires;
 }

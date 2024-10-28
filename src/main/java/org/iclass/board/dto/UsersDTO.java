@@ -19,6 +19,8 @@ public class UsersDTO {
     private String usersRole;
     private LocalDateTime createdAt;
     private char isActive;
+    private String resetPasswordToken;
+    private LocalDateTime resetPasswordExpires;
 
 
 
@@ -31,6 +33,8 @@ public class UsersDTO {
                 .usersRole(entity.getUsersRole())
                 .password(entity.getPassword())
                 .username(entity.getUsername())
+                .resetPasswordToken(entity.getPassword())
+                .resetPasswordExpires(entity.getResetPasswordExpires())
                 .build();
     }
 
@@ -42,6 +46,8 @@ public class UsersDTO {
                 .userId(this.userId)
                 .password(this.password)
                 .username(this.username)
+                .resetPasswordToken(this.resetPasswordToken)
+                .resetPasswordExpires(this.resetPasswordExpires)
                 .build();
     }
 }

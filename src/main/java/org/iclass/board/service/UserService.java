@@ -1,12 +1,18 @@
 package org.iclass.board.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.iclass.board.dao.UserMapper;
 import org.iclass.board.dto.UsersDTO;
+import org.iclass.board.entity.PasswordResetToken;
 import org.iclass.board.entity.UsersEntity;
 import org.iclass.board.jwt.TokenProvider;
+import org.iclass.board.repository.PasswordResetTokenRepository;
 import org.iclass.board.repository.UserRepository;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,30 +20,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class UserService {
-    private final UserMapper userMapper;
-
-
-    public void registerUser(UsersDTO user) {
-        userMapper.save(user);
-    }
-
-    public UsersDTO getUserByUsername(String username) {
-        return userMapper.findByUsername(username);
-    }
-
 
     private final UserRepository userRepository;
+    private final PasswordResetTokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final JavaMailSender mailSender;
 
     public Map<String, Object> login(UsersDTO dto) {
 
@@ -85,4 +85,70 @@ public class UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public UsersDTO findUserIdByEmail(String email) {
+        if(userRepository.findByEmail(email) != null) {
+            UsersEntity user = userRepository.findByEmail(email);
+            return UsersDTO.of(user);
+        } else {
+            return null;
+        }
+    }
+
+    public void sendResetPasswordEmail(String userId, String email) {
+        UsersEntity user = userRepository.findByUserIdAndEmail(userId, email);
+        if (user == null) {
+            throw new IllegalArgumentException("입력한 정보로 사용자를 찾을 수 없습니다.");
+        }
+
+        // 기존의 토큰 삭제 (중복 방지)
+        tokenRepository.deleteByUserId(user.getUserId());
+
+        // 비밀번호 재설정 토큰 생성 (UUID 사용)
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken passwordResetToken = new PasswordResetToken(user.getUserId(), token, user.getUsername(), LocalDateTime.now().plusHours(1));
+        tokenRepository.save(passwordResetToken);
+
+        // 비밀번호 재설정 링크 생성
+        String resetLink = "http://localhost:5173/resetPassword?token=" + token;
+
+        // 이메일 전송 예외 처리 추가
+        try {
+            sendEmail(user.getEmail(), resetLink);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("이메일 발송 중 오류가 발생했습니다. 다시 시도해주세요.", e);
+        }
+    }
+
+    public void resetPassword(String token, String newPassword, String userId) {
+        PasswordResetToken passwordResetToken = tokenRepository.findByTokenAndUserId(token, userId);
+        if (passwordResetToken == null || passwordResetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("유효하지 않거나 만료된 토큰입니다.");
+        }
+
+        UsersEntity user = userRepository.findByUserId(passwordResetToken.getUserId());
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        // 사용된 토큰 삭제 (보안 목적)
+        tokenRepository.delete(passwordResetToken);
+    }
+
+    private void sendEmail(String toEmail, String resetLink) throws MessagingException {
+        // MimeMessage 객체 생성
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        // MimeMessageHelper를 사용하여 이메일 작성
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+        helper.setTo(toEmail);
+        helper.setSubject("비밀번호 재설정 안내");
+        helper.setText(
+                "<p>비밀번호 재설정을 요청하셨습니다.</p>" +
+                        "<p>아래 링크를 클릭하여 비밀번호를 재설정하세요:</p>" +
+                        "<a href=\"" + resetLink + "\">비밀번호 재설정하기</a>", true);
+
+        // 이메일 발송
+        mailSender.send(mimeMessage);
+    }
+
 }
