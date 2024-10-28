@@ -87,4 +87,17 @@ public class ApiReportController {
         reportService.deleteReports(postId);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/confirm/{postId}")
+    public ResponseEntity<?> updateStatus(@PathVariable Long postId, @RequestBody String status) throws NotFoundException {
+        log.info("ApiController : 받음, {}, {}", postId, status);
+        PostsEntity updatedReportStatus = reportService.updateReportStatus(postId, status);
+        if (updatedReportStatus != null) {
+            log.info("ApiController : 성공, {}, {}", postId, updatedReportStatus.getStatus());
+            return ResponseEntity.ok(updatedReportStatus);
+        } else {
+            log.info("ApiController : 실패");
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

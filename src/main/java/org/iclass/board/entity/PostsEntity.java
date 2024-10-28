@@ -65,6 +65,10 @@ public class PostsEntity {
 
     @Column(name = "REPORTECOUNT", columnDefinition = "NUMBER(10) DEFAULT 0")
     private Integer reportCount = 0;
+
+
+    @Column(name = "REPORTSTATUS")
+    private String reportStatus = null;
 }
 
 /*

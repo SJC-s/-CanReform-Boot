@@ -73,4 +73,20 @@ public class ReportService {
 
     }
 
+    public PostsEntity updateReportStatus(Long postId, String status) {
+        log.info("updateService : 받음, {}, {}" ,postId ,status);
+        if (postId == null) {
+            throw new NullPointerException();
+        } else {
+            Optional<PostsEntity> entity = postsRepository.findByPostId(postId);
+            if(entity.isPresent()) {
+                PostsEntity newEntity = entity.get();
+                newEntity.setReportStatus(status);
+                return postsRepository.save(newEntity);
+            } else {
+                log.warn("게시글이 존재하지 않습니다. postId: {}", postId);
+                return null; // 게시글이 존재하지 않는 경우
+            }
+        }
+    }
 }
