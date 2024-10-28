@@ -117,7 +117,9 @@ public class ApiPostsController {
             @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         // 로그인된 사용자와 게시글 작성자 확인
         PostsDTO existingPost = postsService.getPostDetail(postId);
-        if (!existingPost.getUserId().equals(userDetails.getUsername())) {
+        if (!existingPost.getUserId().equals(userDetails.getUsername()) &&
+                userDetails.getAuthorities().stream().noneMatch(auth ->
+                        auth.getAuthority().equals("ADMIN"))) {    // 유저 권한을 확인 : 관리자 권한일 경우 수정가능
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("게시글을 수정할 권한이 없습니다.");
         }
 
@@ -131,7 +133,9 @@ public class ApiPostsController {
     public ResponseEntity<?> deletePost(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails) {
         // 로그인된 사용자와 게시글 작성자 확인
         PostsDTO existingPost = postsService.getPostDetail(postId);
-        if (!existingPost.getUserId().equals(userDetails.getUsername())) {
+        if (!existingPost.getUserId().equals(userDetails.getUsername()) &&
+                userDetails.getAuthorities().stream().noneMatch(auth ->
+                        auth.getAuthority().equals("ADMIN"))) {    // 유저 권한을 확인 : 관리자 권한일 경우 수정가능) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("게시글을 삭제할 권한이 없습니다.");
         }
 
