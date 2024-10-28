@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.CommentsDTO;
 import org.iclass.board.service.CommentsService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,6 +45,17 @@ public class ApiCommentsController {
             log.info("삭제 실패");
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @DeleteMapping("/comments/deletePost/{postId}")
+    public ResponseEntity<?> deleteCommentByPostId(@PathVariable long postId) {
+        int result = commentsService.deleteComments(postId);
+        if(result == 1) {
+            log.info("삭제 성공");
+        } else {
+            log.info("댓글 없음");
+        }
+        return ResponseEntity.ok().build();
     }
 
 }

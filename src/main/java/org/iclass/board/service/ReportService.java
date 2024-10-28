@@ -61,4 +61,16 @@ public class ReportService {
         return map;
     }
 
+    public int deleteReports(Long postId) {
+        List<ReportsEntity> dtoList = reportRepository.findByPostId(postId);
+        if(!dtoList.isEmpty()) {
+            reportRepository.deleteAll(dtoList);
+            return 1;
+        }
+        else {
+            return 0;
+        }
+
+    }
+
 }

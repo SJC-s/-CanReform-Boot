@@ -53,4 +53,14 @@ public class CommentsService {
             return 0;
         }
     }
+
+    public int deleteComments(Long postId) {
+        List<CommentsDTO> dtoList = getComments(postId);
+        if(dtoList != null && !dtoList.isEmpty()) {
+            dtoList.forEach(dto -> deleteComment(dto.getCommentId()));
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }
