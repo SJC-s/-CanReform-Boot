@@ -1,57 +1,30 @@
 package org.iclass.board.controller;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.iclass.board.dto.UserAccountDTO;
 import org.iclass.board.dto.UsersDTO;
-import org.iclass.board.jwt.TokenProvider;
 import org.iclass.board.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
+
+import java.util.Collections;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 @Slf4j
+@CrossOrigin(origins = "http://localhost:5173")
 public class ApiUserController {
 
     private final UserService userService;
-    private final TokenProvider tokenProvider;
-    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UsersDTO usersDTO) {
-        try {
-            // 1. UsernamePasswordAuthenticationToken 생성
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(usersDTO.getUsername(), usersDTO.getPassword());
-
-            // 2. AuthenticationManager를 통해 인증 시도
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
-            // 3. 인증이 성공하면 JWT 토큰 생성
-            String jwt = tokenProvider.generateToken(authentication);
-
-            // 4. 응답 데이터 구성
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", jwt);
-            response.put("user", authentication.getPrincipal()); // 유저 정보를 담을 수 있음
-
-            return ResponseEntity.ok(response);
-
-        } catch (AuthenticationException e) {
-            // 5. 인증 실패 시 예외 처리
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: " + e.getMessage());
-        }
+    public ResponseEntity<?> login(@RequestBody UsersDTO dto) {
+        Map<String, Object> response = userService.login(dto);
+        return ResponseEntity.ok(response);
     }
 
 
@@ -61,10 +34,46 @@ public class ApiUserController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/check-userId")
+    @GetMapping("/checkUserId")
     public ResponseEntity<?> checkUsername(@RequestParam String userId) {
         boolean exists = userService.checkUsernameExists(userId);
         return ResponseEntity.ok(exists);
     }
 
+    @GetMapping("/checkEmail")
+    public ResponseEntity<?> checkEmail(@RequestParam String email) {
+        boolean exists = userService.existsByEmail(email);
+        return ResponseEntity.ok(exists);
+    }
+
+    @GetMapping("/findUserId")
+    public ResponseEntity<?> findUserId(@RequestParam String email) {
+        UsersDTO userId = userService.findUserIdByEmail(email);
+        return ResponseEntity.ok(userId);
+    }
+
+    @PostMapping("/findPassword")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        String userId = request.get("userId");
+        String email = request.get("email");
+        try {
+            userService.sendResetPasswordEmail(userId, email);
+            return ResponseEntity.ok(Collections.singletonMap("message", "비밀번호 재설정 링크가 이메일로 전송되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        String token = request.get("token");
+        String newPassword = request.get("newPassword");
+        String userId = request.get("userId");
+        try {
+            userService.resetPassword(token, newPassword, userId);
+            return ResponseEntity.ok(Collections.singletonMap("message", "비밀번호가 성공적으로 재설정되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }
