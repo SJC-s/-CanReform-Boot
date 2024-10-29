@@ -27,15 +27,11 @@ public class RatingsEntity {
     @Column(name = "POSTID", nullable = false)
     private Long postId;
 
-    @Column(name = "USERID", nullable = false)
+    @Column(name = "USERID", nullable = false, unique = true)
     private String userId;
 
     @Column(name = "RATING", nullable = false, columnDefinition = "Number(2) CHECK (rating BETWEEN 10 AND 50)")
     private Integer rating; // 1-5 환산
-
-    @Lob
-    @Column(name = "REVIEW")
-    private String review;
 
     @CreatedDate
     @Column(name = "CREATEDAT")
