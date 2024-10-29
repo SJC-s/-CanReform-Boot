@@ -12,8 +12,8 @@ import org.iclass.board.repository.PostsRepository;
 import org.iclass.board.repository.ReportRepository;
 import org.iclass.board.service.PostsService;
 import org.iclass.board.service.ReportService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -35,21 +35,34 @@ public class ApiReportController {
     private final ReportRepository reportRepository;
     private final PostsRepository postsRepository;
 
+    // 관리자 권한 확인
+    private boolean isAdmin(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream()
+                .noneMatch(auth -> auth.getAuthority().equals("ADMIN"));
+    }
+
     // 신고 게시판 접속 (관리자)
     @GetMapping(produces = "application/json")  // JSON 형식으로 응답
     public ResponseEntity<?> getPostsWithUsers(
-            @RequestParam(defaultValue = "0") int reportCount
+            @RequestParam(defaultValue = "0") int reportCount, @AuthenticationPrincipal UserDetails userDetails
     ) {
+        // 관리자 권한 확인
+        if(isAdmin(userDetails)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("관리자 권한이 필요합니다.");
+        }
         List<PostsEntity> entity = reportService.getReportList(reportCount);
         return ResponseEntity.ok(entity);
     }
 
     // 신고 당한 글 상세보기 (관리자)
     @GetMapping(value = "/details/{postId}", produces = "application/json")
-    public ResponseEntity<List<ReportDetailDTO>> getReportDetails(@PathVariable long postId) {
+    public ResponseEntity<?> getReportDetails(@PathVariable long postId, @AuthenticationPrincipal UserDetails userDetails) {
+        // 관리자 권한 확인
+        if(isAdmin(userDetails)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("관리자 권한이 필요합니다.");
+        }
         PostsEntity post = postsRepository.findByPostId(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
-
         PostsDTO pDTO = PostsDTO.of(post);
 
         // 여러 리포트를 가져오는 메서드 사용
@@ -68,14 +81,16 @@ public class ApiReportController {
     @GetMapping("/{postId}")
     public ResponseEntity<?> getReportCount(@PathVariable Long postId) {
         PostsDTO dto = postsService.getPostDetail(postId);
-
         return ResponseEntity.ok(dto.getReportCount());
     }
 
     // 신고하기 (사용자)
     @PostMapping("/addReport/{postId}")
     public ResponseEntity<?> addReport(@PathVariable Long postId, @RequestBody ReportsDTO dto, @AuthenticationPrincipal UserDetails userDetails) throws NotFoundException {
-
+        // 유저 유무 확인
+        if(userDetails.getUsername() == null) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
         dto.setUserId(userDetails.getUsername());
         // 신고 내용을 등록
         reportService.saveReport(dto);
@@ -85,13 +100,29 @@ public class ApiReportController {
     // 신고 내역 삭제 (관리자)
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deleteReport(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails) throws NotFoundException {
+        // 유저 유무 확인
+        if(userDetails.getUsername() == null) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+        // 관리자 권한 확인
+        if(isAdmin(userDetails)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("관리자 권한이 필요합니다.");
+        }
         reportService.deleteReports(postId);
         return ResponseEntity.ok().build();
     }
 
     // 신고 글 처리 확인 (관리자)
     @PutMapping("/confirm/{postId}")
-    public ResponseEntity<?> updateStatus(@PathVariable Long postId, @RequestBody String status) throws NotFoundException {
+    public ResponseEntity<?> updateStatus(@PathVariable Long postId, @RequestBody String status, @AuthenticationPrincipal UserDetails userDetails) throws NotFoundException {
+        // 유저 유무 확인
+        if(userDetails.getUsername() == null) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+        // 관리자 권한 확인
+        if(isAdmin(userDetails)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("관리자 권한이 필요합니다.");
+        }
         log.info("ApiController : 받음, {}, {}", postId, status);
         PostsEntity updatedReportStatus = reportService.updateReportStatus(postId, status);
         if (updatedReportStatus != null) {

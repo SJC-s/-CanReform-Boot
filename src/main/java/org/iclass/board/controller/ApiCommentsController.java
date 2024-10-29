@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.CommentsDTO;
 import org.iclass.board.service.CommentsService;
-import org.iclass.board.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +21,6 @@ import java.util.List;
 public class ApiCommentsController {
 
     private final CommentsService commentsService;
-    private final UserService userService;
 
     @PostMapping("/comments")
     public ResponseEntity<?> createComment(@RequestBody CommentsDTO commentsDTO) {
@@ -35,14 +36,15 @@ public class ApiCommentsController {
 
     // 댓글 개별 삭제
     @DeleteMapping("/comments/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable long commentId, @RequestParam String userId) {
+    public ResponseEntity<?> deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal UserDetails userDetails) {
         String writer = commentsService.getUserId(commentId);
+        String username = userDetails.getUsername();
         if(writer.isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        String role = userService.findUsersroleByUserId(userId);
-        if(!writer.equals(userId) && !role.equals("ADMIN")) {
-            return ResponseEntity.badRequest().build();
+        String role = userDetails.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ADMIN"))? "ADMIN" : "MEMBER";
+        if(!writer.equals(username) && !role.equals("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("댓글 삭제 권한이 없습니다.");
         }
         int result = commentsService.deleteComment(commentId);
         if(result == 1) {
@@ -56,10 +58,10 @@ public class ApiCommentsController {
 
     // 댓글 모두 삭제
     @DeleteMapping("/comments/deletePost/{postId}")
-    public ResponseEntity<?> deleteCommentByPostId(@PathVariable long postId, String userId) {
-        String role = userService.findUsersroleByUserId(userId);
+    public ResponseEntity<?> deleteCommentByPostId(@PathVariable long postId, @AuthenticationPrincipal UserDetails userDetails) {
+        String role = userDetails.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ADMIN"))? "ADMIN" : "MEMBER";
         if(!role.equals("ADMIN")) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("댓글 삭제 권한이 없습니다.");
         }
         int result = commentsService.deleteComments(postId);
         if(result == 1) {
