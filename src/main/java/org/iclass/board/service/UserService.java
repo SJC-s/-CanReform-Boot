@@ -10,12 +10,12 @@ import org.iclass.board.entity.UsersEntity;
 import org.iclass.board.jwt.TokenProvider;
 import org.iclass.board.repository.PasswordResetTokenRepository;
 import org.iclass.board.repository.UserRepository;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -151,4 +150,11 @@ public class UserService {
         mailSender.send(mimeMessage);
     }
 
+    public String findUsersroleByUserId(String userId) {
+        log.info("Service :: userId : {}", userId);
+        UsersEntity entity = userRepository.findByUserId(userId);
+        log.info("Service :: userEntity : {}", entity);
+        log.info("Service :: userRole : {}", entity.getUsersRole());
+        return entity.getUsersRole();
+    }
 }

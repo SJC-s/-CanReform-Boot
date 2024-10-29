@@ -1,6 +1,5 @@
 package org.iclass.board.controller;
 
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iclass.board.dto.UsersDTO;
@@ -44,6 +43,12 @@ public class ApiUserController {
     public ResponseEntity<?> checkEmail(@RequestParam String email) {
         boolean exists = userService.existsByEmail(email);
         return ResponseEntity.ok(exists);
+    }
+
+    @GetMapping("/getRole/{userId}")
+    public ResponseEntity<?> getUsersrole(@PathVariable String userId) {
+        String role = userService.findUsersroleByUserId(userId);
+        return ResponseEntity.ok().body(Collections.singletonMap("role", role));
     }
 
     @GetMapping("/findUserId")

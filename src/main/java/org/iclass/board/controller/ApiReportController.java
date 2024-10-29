@@ -13,6 +13,7 @@ import org.iclass.board.repository.ReportRepository;
 import org.iclass.board.service.PostsService;
 import org.iclass.board.service.ReportService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 
+
 public class ApiReportController {
 
     private final ReportService reportService;
@@ -33,6 +35,7 @@ public class ApiReportController {
     private final ReportRepository reportRepository;
     private final PostsRepository postsRepository;
 
+    // 신고 게시판 접속 (관리자)
     @GetMapping(produces = "application/json")  // JSON 형식으로 응답
     public ResponseEntity<?> getPostsWithUsers(
             @RequestParam(defaultValue = "0") int reportCount
@@ -41,12 +44,7 @@ public class ApiReportController {
         return ResponseEntity.ok(entity);
     }
 
-/*    @GetMapping(value = "/details/{postId}", produces = "application/json")
-    public ResponseEntity<?> getReportDetails(@PathVariable long postId) {
-        Map<PostsDTO, List<ReportsDTO>> map = reportService.getReportDetail(postId);
-        return ResponseEntity.ok(map);
-    }*/
-
+    // 신고 당한 글 상세보기 (관리자)
     @GetMapping(value = "/details/{postId}", produces = "application/json")
     public ResponseEntity<List<ReportDetailDTO>> getReportDetails(@PathVariable long postId) {
         PostsEntity post = postsRepository.findByPostId(postId)
@@ -66,6 +64,7 @@ public class ApiReportController {
     }
 
 
+    // 신고 수 불러오기 (사용자)
     @GetMapping("/{postId}")
     public ResponseEntity<?> getReportCount(@PathVariable Long postId) {
         PostsDTO dto = postsService.getPostDetail(postId);
@@ -73,6 +72,7 @@ public class ApiReportController {
         return ResponseEntity.ok(dto.getReportCount());
     }
 
+    // 신고하기 (사용자)
     @PostMapping("/addReport/{postId}")
     public ResponseEntity<?> addReport(@PathVariable Long postId, @RequestBody ReportsDTO dto, @AuthenticationPrincipal UserDetails userDetails) throws NotFoundException {
 
@@ -82,12 +82,14 @@ public class ApiReportController {
         return ResponseEntity.ok(dto);
     }
 
+    // 신고 내역 삭제 (관리자)
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deleteReport(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails) throws NotFoundException {
         reportService.deleteReports(postId);
         return ResponseEntity.ok().build();
     }
 
+    // 신고 글 처리 확인 (관리자)
     @PutMapping("/confirm/{postId}")
     public ResponseEntity<?> updateStatus(@PathVariable Long postId, @RequestBody String status) throws NotFoundException {
         log.info("ApiController : 받음, {}, {}", postId, status);
