@@ -17,7 +17,6 @@ public class RatingsDTO {
     private Long postId;
     private String userId;
     private Integer rating;
-    private String review;
     private LocalDateTime createdAt;
 
     public static RatingsDTO of(RatingsEntity entity) {
@@ -26,7 +25,6 @@ public class RatingsDTO {
                 .postId(entity.getPostId())
                 .userId(entity.getUserId())
                 .rating(entity.getRating())
-                .review(entity.getReview())
                 .createdAt(entity.getCreatedAt())
                 .build();
     }
@@ -37,7 +35,6 @@ public class RatingsDTO {
                 .postId(postId)
                 .userId(userId)
                 .rating(rating)
-                .review(review)
                 .createdAt(createdAt)
                 .build();
     }
