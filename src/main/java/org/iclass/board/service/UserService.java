@@ -10,12 +10,12 @@ import org.iclass.board.entity.UsersEntity;
 import org.iclass.board.jwt.TokenProvider;
 import org.iclass.board.repository.PasswordResetTokenRepository;
 import org.iclass.board.repository.UserRepository;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -150,7 +149,7 @@ public class UserService {
         // 이메일 발송
         mailSender.send(mimeMessage);
     }
-
+  
     // 사용자 정보 조회
     public UsersDTO getCurrentUserInfo(String userId) {
         log.info("Searching for user with ID: " + userId); // 사용자 검색 로그
@@ -193,5 +192,12 @@ public class UserService {
         }
         userRepository.delete(user);
     }
-
+  
+    public String findUsersroleByUserId(String userId) {
+        log.info("Service :: userId : {}", userId);
+        UsersEntity entity = userRepository.findByUserId(userId);
+        log.info("Service :: userEntity : {}", entity);
+        log.info("Service :: userRole : {}", entity.getUsersRole());
+        return entity.getUsersRole();
+    }
 }

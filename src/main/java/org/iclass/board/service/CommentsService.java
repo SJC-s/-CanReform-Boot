@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -62,5 +63,13 @@ public class CommentsService {
         } else {
             return 0;
         }
+    }
+
+    public String getUserId(Long commentId) {
+        CommentsEntity entity = commentsRepository.findByCommentId(commentId);
+        if(entity == null) {
+            return "";
+        }
+        return entity.getUserId();
     }
 }
