@@ -107,4 +107,14 @@ public class TokenProvider {
         }
     }
 
+    public String getUserIdFromToken(String token) {
+        // 토큰을 파싱하여 사용자 ID를 가져오는 로직 구현
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey) // 비밀 키
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject(); // 사용자 ID 반환
+    }
+
 }

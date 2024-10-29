@@ -151,4 +151,47 @@ public class UserService {
         mailSender.send(mimeMessage);
     }
 
+    // 사용자 정보 조회
+    public UsersDTO getCurrentUserInfo(String userId) {
+        log.info("Searching for user with ID: " + userId); // 사용자 검색 로그
+        UsersEntity user = userRepository.findByUserId(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+        return UsersDTO.of(user);
+    }
+
+
+    // 사용자 정보 수정
+    public void updateUser(String userId, UsersDTO userUpdateDTO) {
+        UsersEntity user = userRepository.findByUserId(userId);
+        if (user == null) {
+            throw new RuntimeException("사용자를 찾을 수 없습니다.");
+        }
+
+        updateUserInfo(user, userUpdateDTO);
+        userRepository.save(user);
+    }
+
+    // 공통 사용자 정보 업데이트 로직
+    private void updateUserInfo(UsersEntity user, UsersDTO userDto) {
+        // 비밀번호가 변경되었다면 인코딩 후 업데이트
+        if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+
+        user.setEmail(userDto.getEmail());
+        user.setUsername(userDto.getUsername());
+        // 필요한 다른 필드들도 업데이트 가능
+    }
+
+    // 회원 탈퇴
+    public void deleteUserById(String userId) {
+        UsersEntity user = userRepository.findByUserId(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+        userRepository.delete(user);
+    }
+
 }
