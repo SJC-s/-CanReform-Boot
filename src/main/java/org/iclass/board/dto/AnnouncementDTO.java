@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.iclass.board.entity.PostsEntity;
+import org.iclass.board.entity.AnnouncementEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 
 public class AnnouncementDTO {
-    private Long postId;
+    private Long announcementId;
     private String userId;
     private String title;
     private String content;
@@ -33,9 +33,9 @@ public class AnnouncementDTO {
     private List<MultipartFile> fileS;
 
 
-    public static PostsDTO of(PostsEntity entity) {
-        return PostsDTO.builder()
-                .postId(entity.getPostId())
+    public static AnnouncementDTO of(AnnouncementEntity entity) {
+        return AnnouncementDTO.builder()
+                .announcementId(entity.getAnnouncementId())
                 .userId(entity.getUserId())
                 .title(entity.getTitle())
                 .content(entity.getContent())
@@ -48,9 +48,9 @@ public class AnnouncementDTO {
                 .build();
     }
 
-    public PostsEntity toEntity() {
-        return PostsEntity.builder()
-                .postId(postId)
+    public AnnouncementEntity toEntity() {
+        return AnnouncementEntity.builder()
+                .announcementId(announcementId)
                 .userId(userId)
                 .title(title)
                 .content(content)

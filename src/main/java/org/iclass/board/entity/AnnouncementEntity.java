@@ -17,10 +17,11 @@ import java.time.LocalDateTime;
 @Table(name = "ANNOUNCEMENT")
 
 public class AnnouncementEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "POSTID")
-    private Long postId;
+    @Column(name = "ANNOUNCEMENTID")
+    private Long announcementId;
 
     @Column(name = "USERID", nullable = false)
     private String userId;
@@ -32,7 +33,7 @@ public class AnnouncementEntity {
     @Column(name = "CONTENT")
     private String content;
 
-    @Column(name = "CATEGORY", nullable = false, length = 50, columnDefinition = "VARCHAR2(50) DEFAULT 'Announcement')")
+    @Column(name = "CATEGORY", nullable = false, length = 50, columnDefinition = "VARCHAR2(50) DEFAULT 'Announcement'")
     private String category;
 
     @Column(name = "FILENAMES")
