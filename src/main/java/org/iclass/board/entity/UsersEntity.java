@@ -44,9 +44,4 @@ public class UsersEntity {
     @Column(name = "CREATEDAT")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column()
-    private String resetPasswordToken;
-
-    @Column()
-    private LocalDateTime resetPasswordExpires;
 }
