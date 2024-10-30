@@ -3,6 +3,7 @@ package org.iclass.board.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -33,23 +34,24 @@ public class AnnouncementEntity {
     @Column(name = "CONTENT")
     private String content;
 
-    @Column(name = "CATEGORY", nullable = false, length = 50, columnDefinition = "VARCHAR2(50) DEFAULT 'Announcement'")
+    @Column(name = "CATEGORY", nullable = false, length = 50, columnDefinition = "VARCHAR2(50) DEFAULT 'ANNOUNCEMENT'")
     private String category;
 
     @Column(name = "FILENAMES")
     private String filenames;
 
     @Column(name = "READCOUNT", columnDefinition = "NUMBER(10) DEFAULT 0")
-    private Integer readCount;
+    private Integer readCount = 0;
 
     @Column(name = "COMMENTCOUNT", columnDefinition = "NUMBER(10) DEFAULT 0")
-    private Integer commentCount;
+    private Integer commentCount = 0;
 
     @Column(name = "CREATEDAT")
     @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(name = "UPDATEDAT")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
 }

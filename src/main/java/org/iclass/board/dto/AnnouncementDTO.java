@@ -41,8 +41,8 @@ public class AnnouncementDTO {
                 .content(entity.getContent())
                 .category(entity.getCategory())
                 .filenames(entity.getFilenames())
-                .readCount(entity.getReadCount())
-                .commentCount(entity.getCommentCount())
+                .readCount(entity.getReadCount() != null ? entity.getReadCount() : 0) // 기본값 설정
+                .commentCount(entity.getCommentCount() != null ? entity.getCommentCount() : 0) // 기본값 설정
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
@@ -56,8 +56,8 @@ public class AnnouncementDTO {
                 .content(content)
                 .category(category)
                 .filenames(filenames)
-                .readCount(readCount)
-                .commentCount(commentCount)
+                .readCount(readCount != null ? readCount : 0) // 기본값 설정
+                .commentCount(commentCount != null ? commentCount : 0) // 기본값 설정
                 .updatedAt(updatedAt)
                 .build();
     }

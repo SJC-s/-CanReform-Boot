@@ -24,8 +24,11 @@ public class CommentsEntity {
     @Column(name = "COMMENTID")
     private Long commentId;
 
-    @Column(name = "POSTID", nullable = false)
+    @Column(name = "POSTID")
     private Long postId;
+
+    @Column(name = "ANNOUNCEMENTID")
+    private Long announcementId;
 
     @Column(name = "USERID", nullable = false)
     private String userId;

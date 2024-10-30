@@ -18,6 +18,7 @@ public class CommentsDTO {
     private String userId;
     private String content;
     private LocalDateTime createdAt;
+    private Long announcementId;
 
     public static CommentsDTO of(CommentsEntity entity) {
         return CommentsDTO.builder()
@@ -26,6 +27,7 @@ public class CommentsDTO {
                 .userId(entity.getUserId())
                 .content(entity.getContent())
                 .createdAt(entity.getCreatedAt())
+                .announcementId(entity.getAnnouncementId())
                 .build();
     }
 
@@ -36,6 +38,7 @@ public class CommentsDTO {
                 .userId(userId)
                 .content(content)
                 .createdAt(createdAt)
+                .announcementId(announcementId)
                 .build();
     }
 }

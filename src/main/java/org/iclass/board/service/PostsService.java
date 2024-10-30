@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -196,28 +195,6 @@ public class PostsService {
         }
     }
 
-
-    // 신고수 증가용 함수
-    public void editPost(PostsEntity entity) {
-        PostsEntity originEntity = postsRepository.findByPostId(entity.getPostId())
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없음"));
-        // postId로 가져온 신고들의 개수를 계산
-        Integer reportCount = reportRepository.countByPostId(entity.getPostId());
-
-        // 계산된 신고 수를 대입
-        entity.setReportCount(reportCount);
-
-        // 그 외 내용을 대입 (안하면 null로 초기화)
-        entity.setTitle(originEntity.getTitle());
-        entity.setContent(originEntity.getContent());
-        entity.setCategory(originEntity.getCategory());
-        entity.setStatus(originEntity.getStatus());
-        entity.setIsPrivate(originEntity.getIsPrivate());
-        entity.setUpdatedAt(LocalDateTime.now());
-        entity.setFilenames(originEntity.getFilenames());
-        entity.setCreatedAt(originEntity.getCreatedAt());
-        postsRepository.save(entity);
-    }
 
 }
 

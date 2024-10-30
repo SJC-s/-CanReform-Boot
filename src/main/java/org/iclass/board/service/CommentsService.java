@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,8 +23,23 @@ public class CommentsService {
     private final CommentsRepository commentsRepository;
     private final PostsRepository postsRepository;
 
-    public List<CommentsDTO> getComments(Long postId) {
+    public List<CommentsDTO> getPostComments(Long postId) {
         List<CommentsEntity> comments = commentsRepository.findByPostIdOrderByCreatedAt(postId);
+        List<CommentsDTO> dtoList = new ArrayList<>();
+
+        if(comments != null && !comments.isEmpty()) {
+            comments.forEach(comment -> {
+                dtoList.add(CommentsDTO.of(comment));
+            });
+        } else {
+            return Collections.emptyList();
+        }
+
+        return dtoList;
+    }
+
+    public List<CommentsDTO> getAnnouncementComments(Long announcementId) {
+        List<CommentsEntity> comments = commentsRepository.findByAnnouncementIdOrderByCreatedAt(announcementId);
         List<CommentsDTO> dtoList = new ArrayList<>();
 
         if(comments != null && !comments.isEmpty()) {
@@ -55,8 +69,18 @@ public class CommentsService {
         }
     }
 
-    public int deleteComments(Long postId) {
-        List<CommentsDTO> dtoList = getComments(postId);
+    public int deletePostComments(Long postId) {
+        List<CommentsDTO> dtoList = getPostComments(postId);
+        if(dtoList != null && !dtoList.isEmpty()) {
+            dtoList.forEach(dto -> deleteComment(dto.getCommentId()));
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public int deleteAnnouncementComments(Long announcementId) {
+        List<CommentsDTO> dtoList = getAnnouncementComments(announcementId);
         if(dtoList != null && !dtoList.isEmpty()) {
             dtoList.forEach(dto -> deleteComment(dto.getCommentId()));
             return 1;
