@@ -22,15 +22,29 @@ public class ApiCommentsController {
 
     private final CommentsService commentsService;
 
-    @PostMapping("/comments")
-    public ResponseEntity<?> createComment(@RequestBody CommentsDTO commentsDTO) {
+    @PostMapping("/comments/postComments")
+    public ResponseEntity<?> createComment(@RequestBody CommentsDTO commentsDTO, @RequestParam Long postId) {
         CommentsDTO createComment = commentsService.createComment(commentsDTO);
+        createComment.setPostId(postId);
         return ResponseEntity.ok().body(createComment);
     }
 
-    @GetMapping("/comments/{postId}")
-    public ResponseEntity<?> getComments(@PathVariable long postId) {
-        List<CommentsDTO> list = commentsService.getComments(postId);
+    @PostMapping("/comments/announcementComments")
+    public ResponseEntity<?> createAnnouncementComment(@RequestBody CommentsDTO commentsDTO, @RequestParam Long announcementId) {
+        CommentsDTO createComment = commentsService.createComment(commentsDTO);
+        createComment.setAnnouncementId(announcementId);
+        return ResponseEntity.ok().body(createComment);
+    }
+
+    @GetMapping("/comments/postComments/{postId}")
+    public ResponseEntity<?> getPostComments(@PathVariable long postId) {
+        List<CommentsDTO> list = commentsService.getPostComments(postId);
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/comments/announcementComments/{announcementId}")
+    public ResponseEntity<?> getAnnouncementComments(@PathVariable Long announcementId) {
+        List<CommentsDTO> list = commentsService.getAnnouncementComments(announcementId);
         return ResponseEntity.ok(list);
     }
 
@@ -56,14 +70,30 @@ public class ApiCommentsController {
         }
     }
 
-    // 댓글 모두 삭제
+    // 댓글 모두 삭제 (게시글)
     @DeleteMapping("/comments/deletePost/{postId}")
     public ResponseEntity<?> deleteCommentByPostId(@PathVariable long postId, @AuthenticationPrincipal UserDetails userDetails) {
         String role = userDetails.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ADMIN"))? "ADMIN" : "MEMBER";
         if(!role.equals("ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("댓글 삭제 권한이 없습니다.");
         }
-        int result = commentsService.deleteComments(postId);
+        int result = commentsService.deletePostComments(postId);
+        if(result == 1) {
+            log.info("삭제 성공");
+        } else {
+            log.info("댓글 없음");
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    // 댓글 모두 삭제 (공지사항)
+    @DeleteMapping("/comments/deleteAnnouncement/{announcementId}")
+    public ResponseEntity<?> deleteCommentByAnnouncementId(@PathVariable Long announcementId, @AuthenticationPrincipal UserDetails userDetails){
+        String role = userDetails.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ADMIN"))? "ADMIN" : "MEMBER";
+        if(!role.equals("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("댓글 삭제 권한이 없습니다.");
+        }
+        int result = commentsService.deleteAnnouncementComments(announcementId);
         if(result == 1) {
             log.info("삭제 성공");
         } else {
