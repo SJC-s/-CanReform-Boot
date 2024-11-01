@@ -27,7 +27,7 @@ public class RatingsEntity {
     @Column(name = "POSTID", nullable = false)
     private Long postId;
 
-    @Column(name = "USERID", nullable = false, unique = true)
+    @Column(name = "USERID", nullable = false)
     private String userId;
 
     @Column(name = "RATING", nullable = false, columnDefinition = "Number(2) CHECK (rating BETWEEN 10 AND 50)")
