@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -111,6 +112,7 @@ public class PostsService {
         existingPost.setCategory(postsDTO.getCategory());
         existingPost.setStatus(postsDTO.getStatus());
         existingPost.setIsPrivate(postsDTO.getIsPrivate());
+        existingPost.setUpdatedAt(LocalDateTime.now());
 
         // 기존 파일 처리
         List<String> currentFiles = existingPost.getFilenames() != null ? Arrays.asList(existingPost.getFilenames().split(",")) : new ArrayList<>();
