@@ -32,7 +32,9 @@ import java.util.Arrays;
 public class SecurityConfig {
     private static final String[] PERMIT_LIST = {
             "/", "/signup", "/login", "/js/**", "/api/**", "/index", "/favicon.ico", "/error", "/css/**",
-            "/posts"
+            "/posts",  "/swagger-ui/**",       // Swagger UI 경로 허용
+            "/v3/api-docs/**",      // OpenAPI 문서 경로 허용
+            "/swagger-resources/**" // Swagger 리소스 경로 허용
     };
 
     private final TokenProvider tokenProvider;
@@ -42,17 +44,15 @@ public class SecurityConfig {
     public SecurityFilterChain filterchain(HttpSecurity http) throws Exception {
         log.info(":::::: Custom Security Filter Chain 작동중");
         http.cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 관련 설정
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(r -> r
-                        .requestMatchers(PERMIT_LIST)
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated()
-                );
-
-        //세션 관리 상태 없음으로 구성, 기존 아이디와 패스워드 인증으로 세션을 쿠키에 유지하는 방식을 사용하지 않음
-        http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
-                SessionCreationPolicy.STATELESS)).apply(new MyCustomDsl());  // JWT 필터 추가;
+                .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 비활성화 (STATELESS 사용)
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(PERMIT_LIST).permitAll() // Swagger 및 기타 허용 목록을 먼저 정의
+                        .anyRequest().authenticated() // 나머지 요청은 인증 필요
+                )
+                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .apply(new MyCustomDsl()); // JWT 필터 추가
 
         return http.build();
     }
