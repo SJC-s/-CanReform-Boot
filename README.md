@@ -1,6 +1,13 @@
 # CanReform - Backend
 CanReform의 백엔드는 **Spring Boot**로 구축되어 RESTful API를 통해 프론트엔드와 통신하며, 의류 리폼 업체와 고객 간의 데이터 관리를 효율적으로 지원합니다.
 
+## 프로젝트 구성원
+![image](https://github.com/user-attachments/assets/309e2675-a96e-41f3-baf8-2829a8f612a2)
+
+## 개발 일정
+![image](https://github.com/user-attachments/assets/bcfb5d5f-fe85-4d13-8b87-1e923fbf3557)
+
+
 ## 📎 프로젝트 개요
 의류 리폼 업체가 의뢰 요청을 관리하고, 고객의 평가와 피드백을 통해 서비스 품질을 향상시킬 수 있는 플랫폼입니다.
 
@@ -8,6 +15,7 @@ CanReform의 백엔드는 **Spring Boot**로 구축되어 RESTful API를 통해 
 - **주요 기능**: JWT 인증, 게시글 관리, 별점 평가, 관리자 기능(구현 중)
 
 ## 🔧 기술 스택
+![image](https://github.com/user-attachments/assets/88e0357b-1029-4ca4-8c51-93b71fbccbdf)
 
 - **프레임워크**: Spring Boot
 - **데이터베이스**: Oracle DB
@@ -146,5 +154,8 @@ CanReform-Boot
 
 ## 🗃️ ER 다이어그램
 <img width="994" alt="DB 테이블 구조" src="https://github.com/user-attachments/assets/d1685250-87c3-4f1d-8c88-e5ecb7207cd4">
+
+## 향후 계획 및 개선 사항
+![image](https://github.com/user-attachments/assets/3eef5eac-9c84-430d-99b0-04661cb797c3)
 
 
