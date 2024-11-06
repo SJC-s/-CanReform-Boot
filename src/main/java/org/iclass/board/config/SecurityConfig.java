@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,7 +33,12 @@ import java.util.Arrays;
 public class SecurityConfig {
     private static final String[] PERMIT_LIST = {
             "/", "/signup", "/login", "/js/**", "/api/**", "/index", "/favicon.ico", "/error", "/css/**",
-            "/posts"
+            "/posts",  "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/webjars/**", // 추가
+            "/swagger-config/**" // 추가
     };
 
     private final TokenProvider tokenProvider;
@@ -43,12 +49,12 @@ public class SecurityConfig {
         log.info(":::::: Custom Security Filter Chain 작동중");
         http.cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 관련 설정
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(r -> r
-                        .requestMatchers(PERMIT_LIST)
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated()
-                );
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(PERMIT_LIST).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers.frameOptions().disable());
 
         //세션 관리 상태 없음으로 구성, 기존 아이디와 패스워드 인증으로 세션을 쿠키에 유지하는 방식을 사용하지 않음
         http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
@@ -98,5 +104,18 @@ public class SecurityConfig {
                     .addFilter(jwtAuthenticationFilter)
                     .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
         }
+    }
+
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers(
+                "/swagger-ui/**",
+                "/v3/api-docs/**",
+                "/swagger-ui.html",
+                "/swagger-resources/**",
+                "/webjars/**",
+                "/swagger-config/**"
+        );
     }
 }
