@@ -1,4 +1,4 @@
-# CanReform - Backend
+![image](https://github.com/user-attachments/assets/a79f8d8a-ce25-4dbc-aca3-59848f2ad45e)![image](https://github.com/user-attachments/assets/9d303659-3793-4c26-88d0-19a97069531d)![image](https://github.com/user-attachments/assets/265ba16f-b3fc-460b-ab78-61700ea54449)# CanReform - Backend
 CanReform의 백엔드는 **Spring Boot**로 구축되어 RESTful API를 통해 프론트엔드와 통신하며, 의류 리폼 업체와 고객 간의 데이터 관리를 효율적으로 지원합니다.
 
 ## 프로젝트 구성원
@@ -15,7 +15,7 @@ CanReform의 백엔드는 **Spring Boot**로 구축되어 RESTful API를 통해 
 - **주요 기능**: JWT 인증, 게시글 관리, 별점 평가, 관리자 기능(구현 중)
 
 ## 🔧 기술 스택
-![image](https://github.com/user-attachments/assets/88e0357b-1029-4ca4-8c51-93b71fbccbdf)
+![image](https://github.com/user-attachments/assets/960e385f-0bc9-4a7f-86ec-282c191c7258)
 
 - **프레임워크**: Spring Boot
 - **데이터베이스**: Oracle DB
@@ -154,6 +154,17 @@ CanReform-Boot
 
 ## 🗃️ ER 다이어그램
 <img width="994" alt="DB 테이블 구조" src="https://github.com/user-attachments/assets/d1685250-87c3-4f1d-8c88-e5ecb7207cd4">
+
+## API 명세서(URL : https://sumptuous-nerine-fd8.notion.site/CanReform-API-136fd37a682e80f0b190ed6789399d31?pvs=4)
+![image](https://github.com/user-attachments/assets/5983837e-f1b8-4060-8934-f300596edb4d)
+![image](https://github.com/user-attachments/assets/cdf504e5-09ab-458c-83de-595c35898d44)
+![image](https://github.com/user-attachments/assets/8dc13d69-8c15-4443-9952-822a16ab6c3e)
+![image](https://github.com/user-attachments/assets/e471ff6e-cdc8-4420-8aa4-6fd7865daa7d)
+![image](https://github.com/user-attachments/assets/675e684d-3e93-4a80-bb02-acc485dcb295)
+![image](https://github.com/user-attachments/assets/3fca7f51-061b-4f4f-9113-8c97d0c8d0dd)
+![image](https://github.com/user-attachments/assets/4352455c-0152-4af2-bb0b-409b726773fa)
+
+
 
 ## 향후 계획 및 개선 사항
 ![image](https://github.com/user-attachments/assets/3eef5eac-9c84-430d-99b0-04661cb797c3)
