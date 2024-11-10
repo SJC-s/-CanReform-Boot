@@ -1,5 +1,5 @@
 # CanReform - Backend
-CanReform의 백엔드는 **Spring Boot**로 구축되어 RESTful API를 통해 프론트엔드와 통신하며, 의류 리폼 업체와 고객 간의 데이터 관리를 효율적으로 지원합니다.
+CanReform의 백엔드는 **Spring Boot**로 구축되어 RESTful API를 통해 프론트엔드와 통신하며, 의류 리폼 업체와 고객 간의 데이터 관리를 효율적으로 지원하기 위해 기획되었습니다
 
 ## 프로젝트 구성원
 ![image](https://github.com/user-attachments/assets/309e2675-a96e-41f3-baf8-2829a8f612a2)
@@ -170,4 +170,5 @@ CanReform-Boot
 ## 향후 계획 및 개선 사항
 ![image](https://github.com/user-attachments/assets/3eef5eac-9c84-430d-99b0-04661cb797c3)
 
+## PPT 링크 : https://drive.google.com/file/d/1HShmSv2cI_kHOTQz1Ph_1A_GGXBBJATZ/view?usp=drive_link
 
